@@ -1,0 +1,881 @@
+/* ==========================================
+   MovieManagement.css - Optimized & Modernized
+========================================== */
+
+/* 1. Base Layout & Page Setup */
+.movie-management-page {
+  padding: 28px;
+  max-width: 1280px;
+  margin: 0 auto;
+  color: #f3f4f6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+.movie-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #9ca3af;
+  background-color: #1a1d29;
+  border-radius: 12px;
+  border: 1px dashed #2d3248;
+}
+
+/* 2. Header Section */
+.movie-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.movie-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.movie-title-icon {
+  font-size: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.movie-title h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+
+.movie-title p {
+  margin: 0;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.movie-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reload-movie-btn,
+.add-movie-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reload-movie-btn {
+  background-color: #2a2d3d;
+  color: #e5e7eb;
+  border: 1px solid #3f445d;
+}
+
+.reload-movie-btn:hover:not(:disabled) {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+.add-movie-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.add-movie-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.reload-movie-btn:disabled,
+.add-movie-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 3. Stats Cards */
+.movie-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.movie-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: #1a1d29;
+  border: 1px solid #2a2d3d;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.movie-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #3f445d;
+  background-color: #1e2235;
+}
+
+/* Tab Filter Active States */
+.movie-stat-card.selected {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.08);
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.movie-stat-card.premium-stat.selected {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.08);
+  box-shadow: 0 0 0 1px #f59e0b;
+}
+
+.movie-stat-card.free-stat.selected {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 0 1px #10b981;
+}
+
+.movie-stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.total-icon {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.premium-icon {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.free-icon {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.stat-card-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.stat-info span {
+  display: block;
+  font-size: 13px;
+  color: #8a8d9b;
+  margin-bottom: 2px;
+}
+
+.stat-info h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* 4. Toolbar & Search Box */
+.movie-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.movie-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #1a1d29;
+  border: 1px solid #2a2d3d;
+  border-radius: 8px;
+  padding: 10px 16px;
+  width: 100%;
+  max-width: 360px;
+  transition: border-color 0.2s ease;
+}
+
+.movie-search-box:focus-within {
+  border-color: #3b82f6;
+}
+
+.movie-search-box span {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.movie-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  width: 100%;
+  font-size: 14px;
+}
+
+.movie-search-box input::placeholder {
+  color: #6b7280;
+}
+
+.movie-count {
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* 5. Data Table Styling */
+.movie-table-container {
+  background-color: #1a1d29;
+  border-radius: 12px;
+  border: 1px solid #2a2d3d;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.movie-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.movie-table th {
+  background-color: #141622;
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #2a2d3d;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.movie-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #2a2d3d;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.movie-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.movie-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.movie-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.empty-movies {
+  text-align: center;
+  color: #9ca3af;
+  padding: 48px !important;
+  font-size: 15px;
+}
+
+/* 6. Table Cell Elements */
+.movie-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.movie-poster {
+  width: 44px;
+  height: 62px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #2a2d3d;
+  background-color: #0f111a;
+}
+
+.no-poster {
+  width: 44px;
+  height: 62px;
+  background-color: #2a2d3d;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.movie-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.movie-name strong {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.movie-name small {
+  color: #8a8d9b;
+  font-size: 12px;
+}
+
+.category-badge {
+  background-color: #2a2d3d;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #d1d5db;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Type Badges */
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.type-badge.free {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.type-badge.premium {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* Table Action Buttons */
+.movie-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.movie-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.movie-btn.edit {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.movie-btn.edit:hover:not(:disabled) {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.movie-btn.delete {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.movie-btn.delete:hover:not(:disabled) {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.movie-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 7. Modal Styles (Compatibility for MovieModalForm) */
+.movie-modal-overlay,
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.movie-modal,
+.modal-content {
+  background-color: #181b2a;
+  border: 1px solid #2d3248;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.movie-modal-header,
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #2d3248;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.movie-modal-header h2,
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.movie-modal-header p,
+.modal-header p {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #8a8d9b;
+}
+
+.movie-close-btn {
+  background: transparent;
+  border: none;
+  color: #8a8d9b;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.movie-close-btn:hover {
+  color: #ffffff;
+}
+
+/* Modal Body & Forms */
+.modal-body,
+.movie-form {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #141622;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #2d3248;
+  border-radius: 4px;
+}
+
+.form-row,
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group.full {
+  grid-column: span 2;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #c5c7d0;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: #0f111a;
+  border: 1px solid #2d3248;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #3b82f6;
+}
+
+/* Access Control Box */
+.movie-access {
+  background-color: #0f111a;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid #2d3248;
+}
+
+.access-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.access-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.access-hint {
+  display: block;
+  margin: 4px 0 0 26px;
+  font-size: 12px;
+  color: #8a8d9b;
+}
+
+/* Modal Actions */
+.movie-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #2d3248;
+}
+
+.cancel-btn,
+.save-movie-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: #2a2d3d;
+  color: #e5e7eb;
+}
+
+.cancel-btn:hover {
+  background-color: #374151;
+}
+
+.save-movie-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.save-movie-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsive Breakdown */
+@media (max-width: 768px) {
+  .movie-management-page {
+    padding: 16px;
+  }
+
+  .movie-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full {
+    grid-column: span 1;
+  }
+
+  .movie-search-box {
+    max-width: 100%;
+  }
+}
+/* ==========================================
+   CSS BỔ SUNG / CHỈNH SỬA CHO PHẦN UPLOAD (BO TRÒN & ĐẸP)
+========================================== */
+
+/* Khung bọc toàn bộ khu vực Upload */
+.upload-box-container {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px;
+  border-radius: 12px; /* Bo tròn khung ngoài */
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  margin-top: 6px;
+}
+
+/* Thanh chuyển đổi Upload File / Link URL */
+.upload-mode-toggle {
+  display: inline-flex;
+  background-color: #0f111a;
+  padding: 4px;
+  border-radius: 10px; /* Bo tròn thanh toggle ngoài */
+  border: 1px solid #2d3248;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.upload-mode-toggle button {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #8a8d9b;
+  border-radius: 8px; /* Bo tròn các nút bên trong */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Trạng thái nút đang chọn (Active) */
+.upload-mode-toggle button.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+.upload-mode-toggle button:hover:not(.active) {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Khung chọn File / Input File Custom */
+.upload-input-wrapper input[type="file"] {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #0f111a;
+  border: 1px solid #2d3248;
+  border-radius: 8px; /* Bo tròn khung Choose File */
+  color: #ffffff;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Định dạng riêng cho nút "Choose File" bên trong trình duyệt */
+.upload-input-wrapper input[type="file"]::file-selector-button {
+  background-color: #2a2d3d;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px; /* Bo tròn nút Choose File nhỏ */
+  margin-right: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.upload-input-wrapper input[type="file"]::file-selector-button:hover {
+  background-color: #3b82f6;
+}
+
+/* Nút bấm Custom Upload Label (nếu dùng label thay cho input file) */
+.upload-btn-label {
+  display: block;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed #3b4261;
+  border-radius: 8px; /* Bo tròn khung upload */
+  text-align: center;
+  cursor: pointer;
+  color: #c5c7d0;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.upload-btn-label:hover {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Dòng gợi ý phía dưới ("🖼️ Chọn file ảnh...", "🎥 Chọn file video...") */
+.upload-hint {
+  font-size: 12px;
+  color: #8a8d9b;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+table .movie-poster {
+  width: 48px !important;
+  height: 70px !important;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Đảm bảo ô <td> không bị phình to */
+table td:has(.movie-poster) {
+  width: 60px;
+  text-align: center;
+  padding: 6px 8px;
+}
+
+/* Overlay toàn màn hình */
+.upload-progress-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+/* Card thông báo trung tâm */
+.upload-progress-card {
+  background: #1a1d24;
+  border: 1px solid #2d323f;
+  padding: 32px 28px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+}
+
+.upload-progress-card h3 {
+  margin: 18px 0 10px;
+  font-size: 1.25rem;
+  color: #38ef7d;
+}
+
+.upload-progress-card p {
+  font-size: 0.9rem;
+  color: #a0aec0;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.upload-progress-card small {
+  color: #feb2b2;
+  font-size: 0.8rem;
+  display: block;
+}
+
+/* Hiệu ứng Spinner quay tròn */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #11998e;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.progress-bar-container {
+  width: 100%;
+  height: 12px;
+  background-color: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 15px 0;
+  border: 1px solid #444;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e50914, #ff5252);
+  transition: width 0.3s ease-in-out;
+}

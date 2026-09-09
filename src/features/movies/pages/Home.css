@@ -1,0 +1,111 @@
+/* CONTAINER CHÍNH */
+.home {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #141414;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* HERO BANNER TRÀN MÀN HÌNH */
+.hero {
+  position: relative;
+  width: 100vw; /* Bắt buộc tràn toàn bộ chiều rộng màn hình */
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  height: 70vh; /* Chiều cao vừa vặn 70% viewport */
+  min-height: 480px;
+  max-height: 650px;
+  
+  /* Cài đặt background full khung */
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  
+  display: flex;
+  align-items: flex-end; /* Đẩy nội dung xuống nửa dưới banner */
+  padding-bottom: 50px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+/* NỘI DUNG CHỮ TRÊN BANNER */
+.hero-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.hero-content h1 {
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 12px;
+  line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.hero-description {
+  max-width: 600px;
+  font-size: 0.95rem;
+  color: #e5e5e5;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* NÚT BẤM */
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.hero-buttons button {
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.play-btn {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.play-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.03);
+}
+
+.info-btn {
+  background-color: rgba(109, 109, 110, 0.7);
+  color: #ffffff;
+}
+
+.info-btn:hover {
+  background-color: rgba(109, 109, 110, 0.4);
+  transform: scale(1.03);
+}
+
+/* KHU VỰC DANH SÁCH PHIM BÊN DƯỚI */
+.home-movies {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+}

@@ -1,0 +1,56 @@
+.video-player {
+  width: 100%;
+  position: relative;
+  background: black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video {
+  width: 100%;
+  max-height: 75vh;
+  background: black;
+}
+
+.video-play-overlay {
+  position: absolute;
+
+  width: 75px;
+  height: 75px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: rgba(229, 9, 20, 0.9);
+  color: white;
+
+  font-size: 30px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.video-play-overlay:hover {
+  transform: scale(1.1);
+  background: #e50914;
+}
+.video-player {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  background: black;
+}
+
+.video {
+  width: 100%;
+  max-height: 75vh;
+
+  display: block;
+
+  background: black;
+}

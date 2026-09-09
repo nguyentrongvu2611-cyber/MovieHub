@@ -1,0 +1,336 @@
+.movie-comments-container {
+  margin-top: 24px;
+  background-color: #121824;
+  border-radius: 8px;
+  padding: 20px;
+  color: #ffffff;
+}
+
+/* Rating Section */
+.rating-section {
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 16px;
+}
+
+.rating-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
+.rating-stars-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stars-list {
+  display: flex;
+  gap: 4px;
+}
+
+.star-icon {
+  font-size: 26px;
+  color: #384252;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+.star-icon:hover:not(.disabled) {
+  transform: scale(1.15);
+}
+
+.star-icon.filled {
+  color: #ffc107;
+}
+
+.star-icon.disabled {
+  cursor: default;
+}
+
+.rating-score-text {
+  font-size: 16px;
+  color: #b3b9c5;
+}
+
+/* Comments Section */
+.comments-section h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+/* Khung thông báo đã bình luận */
+.already-commented-box {
+  background-color: #1c2a38;
+  border: 1px solid #2b4c6f;
+  color: #a0c7e4;
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.comment-action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit-comment {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-edit-comment:hover {
+  background-color: #2563eb;
+}
+
+.btn-delete-comment {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-delete-comment:hover {
+  background-color: #dc2626;
+}
+
+/* Banner Chỉnh sửa */
+.editing-banner {
+  background-color: #3b82f622;
+  border-left: 4px solid #3b82f6;
+  color: #60a5fa;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.comment-form {
+  background-color: #1a2232;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.comment-textarea {
+  width: 100%;
+  background-color: #0f141d;
+  border: 1px solid #2d3748;
+  border-radius: 6px;
+  padding: 12px;
+  color: #ffffff;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+}
+
+.comment-textarea:focus {
+  border-color: #e50914;
+}
+
+.comment-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.select-rating-inline {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  color: #a0aec0;
+}
+
+.small-star {
+  font-size: 16px;
+  color: #4a5568;
+  cursor: pointer;
+}
+
+.small-star.active {
+  color: #ffc107;
+}
+
+.rating-val-num {
+  margin-left: 6px;
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.form-submit-group {
+  display: flex;
+  gap: 8px;
+}
+
+.cancel-edit-btn {
+  background-color: #4b5563;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-edit-btn:hover {
+  background-color: #374151;
+}
+
+.submit-comment-btn {
+  background-color: #e50914;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-comment-btn:hover:not(:disabled) {
+  background-color: #b80710;
+}
+
+.submit-comment-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Comment List */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.no-comments {
+  color: #718096;
+  font-style: italic;
+}
+
+.comment-item {
+  display: flex;
+  gap: 12px;
+  background-color: #1a2232;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.comment-item.owner-item {
+  border-color: #2b4c6f;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-content-box {
+  flex: 1;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.owner-badge {
+  color: #60a5fa;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.comment-user-badge {
+  background-color: #ffc107;
+  color: #000;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.comment-time {
+  font-size: 12px;
+  color: #718096;
+  margin-left: auto;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+/* Actions dưới bình luận */
+.item-inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.btn-link-edit,
+.btn-link-delete {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-link-edit {
+  color: #60a5fa;
+}
+
+.btn-link-edit:hover {
+  text-decoration: underline;
+}
+
+.btn-link-delete {
+  color: #f87171;
+}
+
+.btn-link-delete:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,24 @@
+/* Trang danh sách phim hiển thị poster to bự và tự động căn chỉnh */
+.movies-grid {
+  display: grid;
+  /* Đặt chiều rộng tối thiểu cho mỗi card phim là 180px hoặc 200px */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tùy chỉnh khoảng cách trang */
+.movies-page {
+  padding: 80px 20px 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive cho màn hình điện thoại nhỏ */
+@media (max-width: 480px) {
+  .movies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+}

@@ -1,0 +1,420 @@
+/* Layout Tổng Thể */
+.movie-detail-wrapper {
+  position: relative;
+  min-height: 85vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #0f1014;
+  color: #ffffff;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Background Blur Effect */
+.movie-detail-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.25);
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+/* Container Chính */
+.movie-detail-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  background: rgba(20, 21, 26, 0.75);
+  backdrop-filter: blur(15px);
+  padding: 35px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+}
+
+/* Poster */
+.movie-detail-poster {
+  position: relative;
+  flex-shrink: 0;
+  width: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.movie-detail-poster img {
+  width: 100%;
+  height: 440px;
+  object-fit: cover;
+  display: block;
+}
+
+.poster-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.free-badge {
+  background: #2e7d32;
+  color: #fff;
+}
+
+.premium-badge {
+  background: #ff9800;
+  color: #000;
+}
+
+/* Thông tin phim */
+.movie-detail-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-detail-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+/* Meta Tags (Nhãn phụ) */
+.movie-meta-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #ddd;
+  font-weight: 500;
+}
+
+.meta-tag.quality {
+  background: #e50914;
+  color: #fff;
+  font-weight: bold;
+}
+
+.meta-tag.category {
+  background: rgba(229, 9, 20, 0.2);
+  border: 1px solid rgba(229, 9, 20, 0.5);
+  color: #ff4d4d;
+}
+
+/* Info Grid (Bảng thông tin chi tiết) */
+.movie-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 20px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 14px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-item {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.info-label {
+  color: #aaa;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.info-value {
+  color: #eee;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Description (Mô tả nội dung) */
+.movie-description-box {
+  margin-bottom: 25px;
+}
+
+.movie-description-box h3 {
+  font-size: 16px;
+  color: #bbb;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.movie-description-box p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ccc;
+  margin: 0;
+  max-height: 140px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Tùy chỉnh thanh cuộn cho Description */
+.movie-description-box p::-webkit-scrollbar {
+  width: 4px;
+}
+
+.movie-description-box p::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* Actions (Nút chức năng) */
+.movie-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.watch-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #e50914;
+  color: #ffffff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  border: none; /* Đã thêm bỏ viền mặc định */
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+}
+
+.watch-button:hover {
+  background-color: #f6121d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
+}
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 12px 22px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favorite-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.favorite-button.active {
+  background-color: rgba(229, 9, 20, 0.15);
+  border-color: #e50914;
+  color: #ff4d4d;
+}
+
+.favorite-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading & Not Found */
+.movie-detail-loading,
+.movie-detail-notfound {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  gap: 15px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #e50914;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.back-home-btn {
+  color: #e50914;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .movie-detail-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .movie-detail-poster {
+    width: 220px;
+  }
+
+  .movie-detail-poster img {
+    height: 320px;
+  }
+
+  .movie-detail-title {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .movie-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .watch-button,
+  .favorite-button {
+    width: 100%;
+  }
+}
+
+/* Premium Modal Styles */
+.premium-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.premium-modal-box {
+  background: #181824;
+  color: #ffffff;
+  padding: 28px 24px;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid #2a2a3c;
+  animation: modalScaleUp 0.25s ease-out;
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.premium-modal-box h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #ffc107;
+}
+
+.premium-modal-box p {
+  font-size: 14px;
+  color: #cccccc;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-modal-close {
+  background: #2b2b3d;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-modal-close:hover {
+  background: #3b3b52;
+}
+
+.btn-modal-upgrade {
+  background: linear-gradient(135deg, #e50914, #ff5252);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-modal-upgrade:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+}

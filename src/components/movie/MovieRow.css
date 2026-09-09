@@ -1,0 +1,25 @@
+.movie-row {
+  margin-bottom: 24px;
+}
+
+.movie-row h2 {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.movie-row-list {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr); /* Đặt đúng 8 phim trên 1 hàng */
+  gap: 12px;
+  width: 100%;
+}
+
+.movie-row-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.movie-row-list::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}

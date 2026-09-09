@@ -1,0 +1,365 @@
+/* Container Modal */
+.movie-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.movie-modal {
+  background: #1a202c;
+  color: #ffffff;
+  width: 90%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  border: 1px solid #2d3748;
+}
+
+.movie-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #2d3748;
+  padding-bottom: 12px;
+}
+
+.movie-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #fff;
+}
+
+.movie-modal-header p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #a0aec0;
+}
+
+.movie-close-btn {
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* FORM LAYOUT - ĐẢM BẢO HIỂN THỊ ĐỦ CÁC HÀNG */
+.movie-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Chia hàng bằng Flexbox/Grid chuẩn */
+.form-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full {
+  width: 100%;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e0;
+}
+
+/* STYLE CHUẨN CHO INPUT VÀ SELECT (Bắt buộc phải có để hiện Option) */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #2d3748 !important;
+  color: #ffffff !important;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: auto; /* Giữ lại mũi tên mặc định của trình duyệt */
+}
+
+.form-group select option {
+  background-color: #1a202c;
+  color: #ffffff;
+  padding: 8px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Upload Box Style */
+.upload-box-container {
+  background: #232d3f;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed #4a5568;
+}
+
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.upload-mode-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.upload-mode-toggle button {
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  color: #a0aec0;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.upload-mode-toggle button.active {
+  background: #e53e3e;
+  color: #fff;
+  border-color: #e53e3e;
+}
+
+.upload-input-wrapper input[type="file"] {
+  display: none;
+}
+
+.upload-btn-label {
+  display: block;
+  text-align: center;
+  background: #2d3748;
+  border: 1px dashed #718096;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #cbd5e0;
+  font-size: 0.85rem;
+}
+
+/* Checkbox Phim Free */
+.movie-access {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #232d3f;
+  padding: 10px 14px;
+  border-radius: 6px;
+}
+
+.access-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.access-hint {
+  font-size: 0.75rem;
+  color: #a0aec0;
+}
+
+/* Action Buttons */
+.movie-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancel-btn {
+  background: #4a5568;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.save-movie-btn {
+  background: #3182ce;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-movie-btn:hover {
+  background: #2b6cb0;
+}
+
+/* --- Toast Notification (Góc phải trên) --- */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #10b981;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+  font-weight: 500;
+  animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 1.7s forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* --- Progress Conversion Modal --- */
+.conversion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.conversion-modal {
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  width: 420px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid #334155;
+}
+
+.conversion-modal h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conversion-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.log-item {
+  font-family: monospace;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #0f172a;
+}
+
+.log-item.processing {
+  color: #facc15;
+  border-left: 3px solid #facc15;
+}
+
+.log-item.completed {
+  color: #4ade80;
+  border-left: 3px solid #4ade80;
+}
+
+/* Progress bar style */
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  transition: width 0.3s ease;
+}
+
+.conversion-log-box {
+  margin-top: 15px;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  color: #00ff66; /* Màu chữ xanh terminal */
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13px;
+}
+
+.conversion-log-box h4 {
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.log-terminal {
+  max-height: 150px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.log-item {
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.log-spinner {
+  color: #ffcc00;
+  margin-top: 5px;
+  font-style: italic;
+}

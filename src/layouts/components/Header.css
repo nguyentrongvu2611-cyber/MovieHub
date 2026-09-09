@@ -1,0 +1,201 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0 4%;
+  height: 68px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: #e50914;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav > a {
+  color: #e5e5e5;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 20px 0;
+  transition: color 0.2s ease;
+}
+
+.nav > a:hover,
+.nav > a.active {
+  color: #ff5500;
+}
+
+/* DROPDOWN COMPONENT */
+.nav-dropdown {
+  position: relative;
+}
+
+.dropdown-btn {
+  background: none;
+  border: none;
+  color: #e5e5e5;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 20px 0;
+  transition: color 0.2s ease;
+}
+
+.nav-dropdown:hover .dropdown-btn {
+  color: #ff5500;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #181818;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  min-width: 180px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.85);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s ease-in-out;
+  z-index: 1001;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 8px 12px;
+  color: #bbb;
+  text-decoration: none;
+  font-size: 13px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background-color: #ff5500;
+  color: #ffffff;
+}
+
+/* CHIA CỘT DROPDOWN */
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  min-width: 250px;
+}
+
+.grid-3-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  min-width: 380px;
+}
+
+.grid-year {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  min-width: 260px;
+}
+
+.grid-year::-webkit-scrollbar {
+  width: 4px;
+}
+
+.grid-year::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 2px;
+}
+
+/* TÌM KIẾM & USER */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-search input {
+  background-color: #000000;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  outline: none;
+  width: 180px;
+  transition: width 0.3s ease, border-color 0.3s ease;
+}
+
+.header-search input:focus {
+  width: 230px;
+  border-color: #ff5500;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-name {
+  color: #fff;
+  font-size: 13.5px;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid #555;
+  color: #ddd;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #e50914;
+  border-color: #e50914;
+  color: #fff;
+}
+
+.login-btn {
+  background-color: #e50914;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}

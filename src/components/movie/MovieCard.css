@@ -1,0 +1,111 @@
+/* Card Container */
+.movie-card-link {
+  position: relative;
+  width: 100%; /* Để width 100% linh hoạt theo thẻ chứa */
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.movie-card-link:hover {
+  transform: translateY(-4px);
+}
+
+/* Poster Image */
+.movie-card-link .poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.movie-card-link:hover .poster-img {
+  transform: scale(1.05);
+}
+
+/* Play Hover Overlay - Mặc định ẩn hoàn toàn */
+.play-hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.play-button-icon {
+  width: 44px;
+  height: 44px;
+  background-color: #f5a623;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transform: scale(0.8);
+  transition: transform 0.25s ease;
+}
+
+.play-button-icon svg {
+  margin-left: 2px;
+}
+
+/* BẬT HIỂN THỊ KHI HOVER */
+.movie-card-link:hover .play-hover-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.movie-card-link:hover .play-button-icon {
+  transform: scale(1);
+}
+
+/* Info Overlay Underneath - Căn vừa khớp chân ảnh */
+.card-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 8px 8px 8px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 60%,
+    transparent 100%
+  );
+  color: #ffffff;
+  z-index: 4;
+  box-sizing: border-box;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.card-subtext {
+  font-size: 10px;
+  color: rgb(209, 213, 219);
+  margin: 2px 0 0 0;
+  line-height: 1.2;
+}
+

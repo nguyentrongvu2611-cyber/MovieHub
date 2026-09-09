@@ -1,0 +1,82 @@
+.continue-watching {
+  padding: 30px 6%;
+  color: white;
+}
+
+.continue-watching h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.continue-list {
+  display: flex;
+  gap: 20px;
+
+  overflow-x: auto;
+
+  padding-bottom: 10px;
+}
+
+.continue-card {
+  min-width: 240px;
+
+  position: relative;
+
+  cursor: pointer;
+}
+
+.continue-card img {
+  width: 240px;
+  height: 135px;
+
+  object-fit: cover;
+
+  display: block;
+
+  border-radius: 4px;
+}
+
+.continue-card:hover img {
+  filter: brightness(0.6);
+}
+
+.continue-overlay {
+  position: absolute;
+
+  top: 45px;
+  left: 105px;
+
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: rgba(229, 9, 20, 0.9);
+
+  color: white;
+}
+
+.progress-bar {
+  height: 4px;
+
+  background: #555;
+
+  width: 100%;
+}
+
+.progress {
+  height: 100%;
+
+  background: #e50914;
+}
+
+.continue-card h3 {
+  margin-top: 10px;
+
+  font-size: 15px;
+}
