@@ -135,15 +135,29 @@ export default function MovieManagement() {
     setEditingMovie(null);
   };
 
-  // 3. Thêm / Cập nhật phim
-  const handleFormSubmit = async (payload) => {
+const handleFormSubmit = async (payload) => {
     try {
       setActionLoading(true);
 
+      // Chuyển đổi video_urls từ String sang Dictionary Object nếu cần
+      let formattedVideoUrls = payload.video_urls;
+      if (typeof formattedVideoUrls === "string") {
+        try {
+          formattedVideoUrls = JSON.parse(formattedVideoUrls || "{}");
+        } catch {
+          formattedVideoUrls = {};
+        }
+      }
+
+      const finalPayload = {
+        ...payload,
+        video_urls: formattedVideoUrls || {},
+      };
+
       if (editingMovie) {
-        await api.put(`/movies/${editingMovie.id}`, payload);
+        await api.put(`/movies/${editingMovie.id}`, finalPayload);
       } else {
-        await api.post("/movies", payload);
+        await api.post("/movies", finalPayload);
       }
 
       closeModal();

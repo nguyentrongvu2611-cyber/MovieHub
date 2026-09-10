@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import Hls from "hls.js";
 
 // Shared API Client Instance
 import api from "../../../services/api";
@@ -28,8 +29,9 @@ function Watch() {
   // Mặc định chất lượng là 480p
   const [selectedQuality, setSelectedQuality] = useState("480p");
 
-  // Ref lưu thẻ video và thời gian xem dở
+  // Ref lưu thẻ video và HLS instance
   const videoRef = useRef(null);
+  const hlsRef = useRef(null);
   const savedTimeRef = useRef(0);
 
   const hasRecorded = useRef(false);
@@ -41,10 +43,21 @@ function Watch() {
   // Kiểm tra user có phải Premium/Admin không
   const isPremiumUser = Boolean(
     currentUser?.is_premium === true ||
-    currentUser?.is_premium === "true" ||
-    currentUser?.is_premium === 1 ||
-    currentUser?.role === "admin",
+      currentUser?.is_premium === "true" ||
+      currentUser?.is_premium === 1 ||
+      currentUser?.role === "admin",
   );
+
+  // Parse safe cho object video_urls
+  const parsedVideoUrls = useMemo(() => {
+    if (!movie?.video_urls) return null;
+    if (typeof movie.video_urls === "object") return movie.video_urls;
+    try {
+      return JSON.parse(movie.video_urls);
+    } catch {
+      return null;
+    }
+  }, [movie]);
 
   useEffect(() => {
     const loadMovie = async () => {
@@ -83,6 +96,29 @@ function Watch() {
         }
 
         setMovie(data);
+
+        // Tự động chọn chất lượng tốt nhất có sẵn (1080p -> 720p -> 480p)
+        let videoUrlsObj = null;
+        if (data?.video_urls) {
+          if (typeof data.video_urls === "object") {
+            videoUrlsObj = data.video_urls;
+          } else {
+            try {
+              videoUrlsObj = JSON.parse(data.video_urls);
+            } catch {
+              videoUrlsObj = null;
+            }
+          }
+        }
+
+        if (videoUrlsObj) {
+          const availableQuality = ["1080p", "720p", "480p"].find(
+            (q) => videoUrlsObj[q] && String(videoUrlsObj[q]).trim() !== "",
+          );
+          if (availableQuality) {
+            setSelectedQuality(availableQuality);
+          }
+        }
       } catch (err) {
         console.error("Lỗi khi tải chi tiết phim:", err);
         setError("Không thể kết nối đến máy chủ hoặc không tìm thấy phim.");
@@ -94,7 +130,7 @@ function Watch() {
     loadMovie();
   }, [id, navigate, currentUser, isPremiumUser]);
 
-  // HỆ THỐNG HEARTBEAT
+  // HỆ THỐNG HEARTBEAT (QUẢN LÝ MÀN HÌNH XEM CÙNG LÚC)
   useEffect(() => {
     if (!userId || !movie) return;
 
@@ -117,7 +153,7 @@ function Watch() {
     };
 
     sendPing();
-    const intervalId = setInterval(sendPing, 1500);
+    const intervalId = setInterval(sendPing, 15000);
 
     return () => {
       clearInterval(intervalId);
@@ -137,7 +173,7 @@ function Watch() {
     };
   }, [movie, userId]);
 
-  // Ghi nhận lịch sử xem
+  // Ghi nhận lịch sử xem phim
   useEffect(() => {
     const recordMovieView = async () => {
       if (!userId || !id || hasRecorded.current || !movie) return;
@@ -153,38 +189,73 @@ function Watch() {
     recordMovieView();
   }, [id, movie, userId]);
 
-  // FIX 1: Ghép URL chính xác cho cả domain absolute và path relative
+  // Ghép URL chính xác cho cả absolute và relative path
   const getFullVideoUrl = (rawUrl) => {
-    if (!rawUrl) return null;
-    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))
-      return rawUrl;
+    if (!rawUrl) return "";
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
 
-    const apiBase =
-      api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com";
+    const apiBase = api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com";
+    
+    let baseUrl;
     try {
-      const origin = new URL(apiBase).origin;
-      return `${origin}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+      baseUrl = new URL(apiBase).origin;
     } catch {
-      return `https://moviehub-backend-ln1c.onrender.com${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+      baseUrl = apiBase.replace(/\/api\/v1\/?$/, "");
     }
+
+    const cleanPath = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+    return `${baseUrl}${cleanPath}`;
   };
 
-  // Xác định đường dẫn video theo chất lượng
+  // Lấy đường dẫn video theo chất lượng
   const getCurrentVideoSource = () => {
     if (!movie) return null;
 
-    if (
-      movie.video_urls &&
-      typeof movie.video_urls === "object" &&
-      movie.video_urls[selectedQuality]
-    ) {
-      return getFullVideoUrl(movie.video_urls[selectedQuality]);
+    if (parsedVideoUrls) {
+      if (parsedVideoUrls[selectedQuality]) {
+        return getFullVideoUrl(parsedVideoUrls[selectedQuality]);
+      }
+      const fallbackQuality = ["1080p", "720p", "480p"].find(
+        (q) => parsedVideoUrls[q],
+      );
+      if (fallbackQuality) {
+        return getFullVideoUrl(parsedVideoUrls[fallbackQuality]);
+      }
     }
 
     return getFullVideoUrl(movie.video_url);
   };
 
-  // FIX 2: Lưu lại thời gian phát hiện tại trước khi chuyển chất lượng
+  const activeVideoUrl = getCurrentVideoSource();
+
+  // Khởi tạo và gắn HLS Player cho Video Tag
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !activeVideoUrl) return;
+
+    if (Hls.isSupported() && activeVideoUrl.endsWith(".m3u8")) {
+      const hls = new Hls({ enableWorker: true });
+      hls.loadSource(activeVideoUrl);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (savedTimeRef.current > 0) {
+          video.currentTime = savedTimeRef.current;
+        }
+        video.play().catch(() => {});
+      });
+
+      hlsRef.current = hls;
+
+      return () => {
+        hls.destroy();
+      };
+    } else {
+      video.src = activeVideoUrl;
+    }
+  }, [activeVideoUrl]);
+
+  // Xử lý chuyển đổi chất lượng
   const handleQualityChange = (quality) => {
     if ((quality === "720p" || quality === "1080p") && !isPremiumUser) {
       alert(
@@ -198,10 +269,15 @@ function Watch() {
     if (videoRef.current) {
       savedTimeRef.current = videoRef.current.currentTime;
     }
+
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+
     setSelectedQuality(quality);
   };
 
-  // FIX 3: Khôi phục thời gian xem sau khi video mới load xong
   const handleLoadedMetadata = () => {
     if (videoRef.current && savedTimeRef.current > 0) {
       videoRef.current.currentTime = savedTimeRef.current;
@@ -251,8 +327,6 @@ function Watch() {
       </div>
     );
   }
-
-  const activeVideoUrl = getCurrentVideoSource();
 
   return (
     <div
@@ -339,13 +413,13 @@ function Watch() {
               boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
             }}
           >
-            {/* TRÌNH PHÁT VIDEO */}
+            {/* TRÌNH PHÁT VIDEO INTEGRATED HLS */}
             <video
+              key={activeVideoUrl}
               ref={videoRef}
               className="movie-video"
               controls
               autoPlay
-              src={activeVideoUrl}
               onLoadedMetadata={handleLoadedMetadata}
               controlsList={canDownload ? "" : "nodownload"}
               onContextMenu={(e) => !canDownload && e.preventDefault()}
@@ -378,20 +452,30 @@ function Watch() {
 
               <div style={{ display: "flex", gap: "8px" }}>
                 {["480p", "720p", "1080p"].map((q) => {
+                  const isAvailable = Boolean(parsedVideoUrls?.[q]);
                   const isLocked =
                     (q === "720p" || q === "1080p") && !isPremiumUser;
                   const isActive = selectedQuality === q;
+                  const isDisabled = parsedVideoUrls && !isAvailable;
 
                   return (
                     <button
                       key={q}
                       onClick={() => handleQualityChange(q)}
+                      disabled={isDisabled}
+                      title={
+                        isDisabled
+                          ? `Chưa có bản ${q} cho phim này`
+                          : isLocked
+                            ? `Chất lượng ${q} yêu cầu tài khoản Premium`
+                            : `Xem bản ${q}`
+                      }
                       style={{
                         padding: "6px 14px",
                         borderRadius: "6px",
                         fontSize: "13px",
                         fontWeight: "bold",
-                        cursor: "pointer",
+                        cursor: isDisabled ? "not-allowed" : "pointer",
                         border: "none",
                         transition: "all 0.2s ease",
                         backgroundColor: isActive
@@ -399,8 +483,12 @@ function Watch() {
                           : isLocked
                             ? "#374151"
                             : "#4b5563",
-                        color: isLocked ? "#9ca3af" : "#ffffff",
-                        opacity: isLocked ? 0.7 : 1,
+                        color: isDisabled
+                          ? "#6b7280"
+                          : isLocked
+                            ? "#9ca3af"
+                            : "#ffffff",
+                        opacity: isDisabled ? 0.4 : isLocked ? 0.7 : 1,
                         display: "flex",
                         alignItems: "center",
                         gap: "4px",

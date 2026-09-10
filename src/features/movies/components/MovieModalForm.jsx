@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import api from "../../../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,6 +33,27 @@ const BACKEND_BASE_URL = (
   api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com"
 ).replace(/\/api\/v1\/?$/, "");
 
+const parseVideoUrls = (rawVideoUrls) => {
+  if (!rawVideoUrls) return { "480p": "", "720p": "", "1080p": "" };
+  if (typeof rawVideoUrls === "object") {
+    return {
+      "480p": rawVideoUrls["480p"] || "",
+      "720p": rawVideoUrls["720p"] || "",
+      "1080p": rawVideoUrls["1080p"] || "",
+    };
+  }
+  try {
+    const parsed = JSON.parse(rawVideoUrls);
+    return {
+      "480p": parsed["480p"] || "",
+      "720p": parsed["720p"] || "",
+      "1080p": parsed["1080p"] || "",
+    };
+  } catch (e) {
+    return { "480p": "", "720p": "", "1080p": "" };
+  }
+};
+
 const getInitialFormData = (movie, categoryOptions = []) => {
   if (movie) {
     return {
@@ -51,8 +72,6 @@ const getInitialFormData = (movie, categoryOptions = []) => {
       duration: movie.duration || 120,
       quality: movie.quality || "1080p",
       poster_url: movie.poster_url || "",
-      video_url: movie.video_url || "",
-      video_urls: movie.video_urls || null,
       is_free: movie.is_free !== undefined ? Boolean(movie.is_free) : true,
     };
   }
@@ -68,8 +87,6 @@ const getInitialFormData = (movie, categoryOptions = []) => {
     duration: 120,
     quality: "1080p",
     poster_url: "",
-    video_url: "",
-    video_urls: null,
     is_free: true,
   };
 };
@@ -86,154 +103,42 @@ export default function MovieModalForm({
       ? categories.map((c) => ({ value: String(c.id), label: c.name }))
       : DEFAULT_CATEGORIES;
 
-  const [prevMovie, setPrevMovie] = useState(editingMovie);
-  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
-
   const [formData, setFormData] = useState(() =>
     getInitialFormData(editingMovie, categoryOptions),
   );
-  const [posterInputMode, setPosterInputMode] = useState(() =>
-    editingMovie?.poster_url?.startsWith("http") ? "url" : "upload",
+  const [videoUrls, setVideoUrls] = useState(() =>
+    parseVideoUrls(editingMovie?.video_urls),
   );
-  const [videoInputMode, setVideoInputMode] = useState(() =>
-    editingMovie?.video_url?.startsWith("http") ? "url" : "upload",
-  );
-
+  const [posterInputMode, setPosterInputMode] = useState("upload");
+  const [videoInputMode, setVideoInputMode] = useState("upload");
   const [uploadingPoster, setUploadingPoster] = useState(false);
-  const [uploadingVideo, setUploadingVideo] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [convertLogs, setConvertLogs] = useState([]);
+  const [uploadingVideoQuality, setUploadingVideoQuality] = useState(null);
 
-  const logConsoleRef = useRef(null);
-  const cleanSseMessage = (rawMsg) => {
-    if (!rawMsg) return "";
-    let text = typeof rawMsg === "string" ? rawMsg : JSON.stringify(rawMsg);
-
-    return text
-      .replace(/^\[SSE LOG\]:\s*/gi, "")
-      .replace(/^(?:-->\s*)?\[Upload Route\]\s*/gi, "")
-      .replace(/^[🚀🎉✅]\s*/gu, "")
-      .trim();
-  };
-  if (editingMovie !== prevMovie || isOpen !== prevIsOpen) {
-    setPrevMovie(editingMovie);
-    setPrevIsOpen(isOpen);
+  // Sync lại data khi mở Modal hoặc đổi phim chỉnh sửa
+  useEffect(() => {
     if (isOpen) {
       setFormData(getInitialFormData(editingMovie, categoryOptions));
+      setVideoUrls(parseVideoUrls(editingMovie?.video_urls));
       setPosterInputMode(
         editingMovie?.poster_url?.startsWith("http") ? "url" : "upload",
       );
-      setVideoInputMode(
-        editingMovie?.video_url?.startsWith("http") ? "url" : "upload",
-      );
-      setConvertLogs([]);
-      setUploadProgress(0);
     }
-  }
+  }, [isOpen, editingMovie]);
 
-  useEffect(() => {
-    if (logConsoleRef.current) {
-      logConsoleRef.current.scrollTop = logConsoleRef.current.scrollHeight;
-    }
-  }, [convertLogs]);
-
-  // Lắng nghe tiến trình HLS từ Server via SSE (Server-Sent Events)
-  useEffect(() => {
-    if (!uploadingVideo) return;
-
-    // Mở kết nối EventSource SSE
-    const eventSource = new EventSource(
-      `${BACKEND_BASE_URL}/api/v1/upload/stream-progress`,
-    );
-
-    eventSource.onmessage = (event) => {
-      let rawText = event.data;
-      try {
-        const parsed = JSON.parse(event.data);
-        if (parsed.message) rawText = parsed.message;
-      } catch {
-        // Giữ nguyên rawText nếu không phải JSON
-      }
-
-      const cleanMsg = cleanSseMessage(rawText);
-      if (!cleanMsg) return;
-
-      // 1. Cập nhật log vào Terminal nhỏ trong Modal
-      setConvertLogs((prev) => [...prev, cleanMsg]);
-
-      // 2. Kiểm tra trạng thái hoàn thành
-      const isFinished = cleanMsg
-        .toLowerCase()
-        .includes("hoàn tất xử lý tất cả");
-
-      if (isFinished) {
-        toast.update("sse-convert-toast", {
-          render: (
-            <div style={{ padding: "2px 0" }}>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  color: "#4adb83",
-                  fontSize: "13px",
-                }}
-              >
-                🎉 Hoàn tất xử lý tất cả độ phân giải!
-              </div>
-            </div>
-          ),
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-          closeButton: true,
-        });
-        eventSource.close();
-      } else {
-        // 3. Cập nhật realtime từng độ phân giải (480p, 720p, 1080p...)
-        toast.update("sse-convert-toast", {
-          render: (
-            <div style={{ padding: "2px 0", maxWidth: "260px" }}>
-              <div
-                style={{
-                  fontWeight: "600",
-                  fontSize: "13px",
-                  color: "#61afef",
-                  marginBottom: "3px",
-                }}
-              >
-                ⚙️ Tiến trình Convert HLS
-              </div>
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#abb2bf",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                }}
-              >
-                👉 {cleanMsg}
-              </div>
-            </div>
-          ),
-          type: "info",
-          isLoading: true,
-        });
-      }
-    };
-
-    eventSource.onerror = () => {
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, [uploadingVideo]);
+  if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleVideoUrlChange = (quality, value) => {
+    setVideoUrls((prev) => ({
+      ...prev,
+      [quality]: value,
     }));
   };
 
@@ -253,8 +158,7 @@ export default function MovieModalForm({
       const uploadedUrl =
         response.data?.url ||
         response.data?.poster_url ||
-        response.data?.file_path ||
-        response.data;
+        response.data?.file_path;
 
       if (typeof uploadedUrl === "string") {
         setFormData((prev) => ({ ...prev, poster_url: uploadedUrl }));
@@ -269,7 +173,7 @@ export default function MovieModalForm({
     }
   };
 
-  const handleUploadVideo = async (event) => {
+  const handleUploadSingleVideo = async (event, quality) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -277,145 +181,31 @@ export default function MovieModalForm({
     uploadFormData.append("file", file);
 
     try {
-      setUploadingVideo(true);
-      setUploadProgress(0);
-      setConvertLogs([]);
+      setUploadingVideoQuality(quality);
 
-      // 1. Tạo Toast hiển thị ban đầu
-      toast.loading(
-        <div style={{ padding: "2px 0" }}>
-          <div
-            style={{ fontWeight: "600", fontSize: "13px", color: "#61afef" }}
-          >
-            🚀 Đang kết nối tiến trình xử lý...
-          </div>
-        </div>,
-        { toastId: "sse-convert-toast" },
-      );
-
-      // 2. Kích hoạt kết nối SSE NGAY LẬP TỨC trước khi POST file
-      const eventSource = new EventSource(
-        `${BACKEND_BASE_URL}/api/v1/upload/stream-progress`,
-      );
-
-      // THÊM: Xử lý lỗi để tránh spam console khi đứt kết nối
-      eventSource.onerror = (err) => {
-        console.error("Lỗi kết nối SSE Upload:", err);
-        eventSource.close(); // Đóng stream khi xảy ra lỗi kết nối
-      };
-
-      eventSource.onmessage = (e) => {
-        let rawText = e.data;
-        try {
-          const parsed = JSON.parse(e.data);
-          if (parsed.message) rawText = parsed.message;
-        } catch {
-          // Giữ nguyên rawText
-        }
-
-        const cleanMsg = cleanSseMessage(rawText);
-        if (!cleanMsg) return;
-
-        // Cập nhật log console trong Modal
-        setConvertLogs((prev) => [...prev, cleanMsg]);
-
-        // Cập nhật Toast đồng bộ 100% với Backend
-        const isFinished = cleanMsg
-          .toLowerCase()
-          .includes("hoàn tất xử lý tất cả");
-
-        if (isFinished) {
-          toast.update("sse-convert-toast", {
-            render: (
-              <div style={{ padding: "2px 0" }}>
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    color: "#4adb83",
-                    fontSize: "13px",
-                  }}
-                >
-                  🎉 Hoàn tất xử lý tất cả độ phân giải!
-                </div>
-              </div>
-            ),
-            type: "success",
-            isLoading: false,
-            autoClose: 3000,
-            closeButton: true,
-          });
-          eventSource.close(); // Đóng SSE khi xong hẳn
-        } else {
-          toast.update("sse-convert-toast", {
-            render: (
-              <div style={{ padding: "2px 0", maxWidth: "260px" }}>
-                <div
-                  style={{
-                    fontWeight: "600",
-                    fontSize: "13px",
-                    color: "#61afef",
-                    marginBottom: "3px",
-                  }}
-                >
-                  ⚙️ Tiến trình HLS
-                </div>
-                <div
-                  style={{
-                    fontSize: "12px",
-                    color: "#abb2bf",
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  👉 {cleanMsg}
-                </div>
-              </div>
-            ),
-            type: "info",
-            isLoading: true,
-          });
-        }
-      };
-
-      eventSource.onerror = () => {
-        eventSource.close();
-      };
-
-      // 3. Tiến hành POST upload file lên server (SSE đã sẵn sàng hứng log)
       const response = await api.post("/upload/video", uploadFormData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total,
-          );
-          setUploadProgress(percent);
-        },
       });
 
       const uploadedUrl =
         response.data?.url ||
         response.data?.video_url ||
         response.data?.file_path;
-      const uploadedVideoUrls = response.data?.video_urls || null;
 
       if (uploadedUrl) {
-        setFormData((prev) => ({
+        setVideoUrls((prev) => ({
           ...prev,
-          video_url: uploadedUrl,
-          video_urls: uploadedVideoUrls,
+          [quality]: uploadedUrl,
         }));
+        toast.success(`🎬 Upload video bản ${quality} thành công!`);
       }
     } catch (error) {
-      console.error("Lỗi upload video:", error);
-      toast.update("sse-convert-toast", {
-        render: `❌ Lỗi: ${error?.response?.data?.detail || "Upload video thất bại!"}`,
-        type: "error",
-        isLoading: false,
-        autoClose: 4000,
-        closeButton: true,
-      });
+      console.error(`Lỗi upload video ${quality}:`, error);
+      toast.error(
+        error?.response?.data?.detail || `Upload video ${quality} thất bại!`,
+      );
     } finally {
-      setUploadingVideo(false);
+      setUploadingVideoQuality(null);
       event.target.value = "";
     }
   };
@@ -428,14 +218,26 @@ export default function MovieModalForm({
       return toast.warning("Vui lòng nhập mô tả!");
     if (!formData.poster_url.trim())
       return toast.warning("Vui lòng chọn Poster!");
-    if (!formData.video_url.trim())
-      return toast.warning("Vui lòng chọn Video!");
+
+    const hasAtLeastOneVideo = Object.values(videoUrls).some(
+      (url) => url && url.trim() !== "",
+    );
+    if (!hasAtLeastOneVideo) {
+      return toast.warning(
+        "Vui lòng cung cấp ít nhất 1 video (480p, 720p hoặc 1080p)!",
+      );
+    }
+
+    const defaultVideoUrl =
+      videoUrls["1080p"] || videoUrls["720p"] || videoUrls["480p"] || "";
 
     const payload = {
       ...formData,
       category_id: Number(formData.category_id),
       year: Number(formData.year),
       duration: Number(formData.duration),
+      video_url: defaultVideoUrl,
+      video_urls: videoUrls, // ✅ Sửa ở đây: Truyền thẳng Object
     };
 
     onSubmit(payload);
@@ -448,18 +250,11 @@ export default function MovieModalForm({
       : `${BACKEND_BASE_URL}${url.startsWith("/") ? url : `/${url}`}`;
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="movie-modal-overlay" onClick={onClose}>
-      {/* Container hiển thị Toast thông báo ở góc trên bên phải ngoài Modal */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        pauseOnHover
         theme="dark"
         style={{ zIndex: 999999 }}
       />
@@ -468,9 +263,9 @@ export default function MovieModalForm({
         <div className="movie-modal-header">
           <div>
             <h2>{editingMovie ? "✏️ Chỉnh sửa phim" : "🎬 Thêm phim mới"}</h2>
-            <p>Nhập đầy đủ thông tin phim và phân loại chính xác</p>
+            <p>Nhập đầy đủ thông tin phim và tải lên các bản video tương ứng</p>
           </div>
-          <button className="movie-close-btn" onClick={onClose}>
+          <button className="movie-close-btn" type="button" onClick={onClose}>
             ×
           </button>
         </div>
@@ -599,7 +394,7 @@ export default function MovieModalForm({
               />
             </div>
             <div className="form-group">
-              <label>Chất lượng *</label>
+              <label>Chất lượng hiển thị *</label>
               <select
                 name="quality"
                 value={formData.quality}
@@ -670,10 +465,10 @@ export default function MovieModalForm({
             )}
           </div>
 
-          {/* Video Upload Box */}
+          {/* Multi-Quality Video Upload Box */}
           <div className="form-group full upload-box-container">
             <div className="upload-header">
-              <label>Video Phim *</label>
+              <label>Video Phim (3 Chất Lượng) *</label>
               <div className="upload-mode-toggle">
                 <button
                   type="button"
@@ -687,78 +482,73 @@ export default function MovieModalForm({
                   className={videoInputMode === "url" ? "active" : ""}
                   onClick={() => setVideoInputMode("url")}
                 >
-                  🔗 Link URL
+                  🔗 Nhập Link Direct
                 </button>
               </div>
             </div>
 
-            {videoInputMode === "upload" ? (
-              <div className="upload-input-wrapper">
-                <input
-                  type="file"
-                  accept="video/*"
-                  id="video-upload"
-                  onChange={handleUploadVideo}
-                  disabled={uploadingVideo}
-                />
-                <label htmlFor="video-upload" className="upload-btn-label">
-                  {uploadingVideo
-                    ? `⏳ Đang tải & convert... ${uploadProgress}%`
-                    : "🎥 Chọn file video từ máy..."}
-                </label>
-
-                {uploadingVideo && (
-                  <div
-                    className="progress-bar-container"
-                    style={{ marginTop: "8px" }}
-                  >
-                    <div
-                      className="progress-bar-fill"
-                      style={{ width: `${uploadProgress}%` }}
-                    ></div>
-                  </div>
-                )}
-
-                {/* Khung Terminal Console log các bước convert */}
-                {convertLogs.length > 0 && (
-                  <div
-                    ref={logConsoleRef}
+            <div
+              className="quality-inputs-list"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                marginTop: "10px",
+              }}
+            >
+              {["480p", "720p", "1080p"].map((q) => (
+                <div
+                  key={q}
+                  className="quality-row"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    padding: "10px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <span
                     style={{
-                      marginTop: "12px",
-                      padding: "10px",
-                      backgroundColor: "#0d1117",
-                      borderRadius: "6px",
-                      border: "1px solid #30363d",
-                      fontFamily: "monospace",
-                      fontSize: "12px",
-                      color: "#3fb950",
-                      maxHeight: "130px",
-                      overflowY: "auto",
+                      minWidth: "60px",
+                      fontWeight: "bold",
+                      color: "#f59e0b",
                     }}
                   >
-                    {convertLogs.map((log, idx) => (
-                      <div key={idx} style={{ marginBottom: "4px" }}>
-                        {log}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                    {q}:
+                  </span>
 
-                {formData.video_url && (
-                  <div className="preview-container video-preview">
-                    <span>🎬 Video path: {formData.video_url}</span>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <input
-                type="text"
-                name="video_url"
-                value={formData.video_url}
-                onChange={handleChange}
-                placeholder="https://example.com/video.mp4"
-              />
-            )}
+                  {videoInputMode === "upload" ? (
+                    <div style={{ flex: 1, display: "flex", gap: "10px" }}>
+                      <input
+                        type="file"
+                        accept="video/mp4,video/mkv"
+                        onChange={(e) => handleUploadSingleVideo(e, q)}
+                        disabled={uploadingVideoQuality !== null}
+                      />
+                      {uploadingVideoQuality === q && (
+                        <span style={{ color: "#eab308" }}>⏳ Đang tải...</span>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={videoUrls[q]}
+                      onChange={(e) => handleVideoUrlChange(q, e.target.value)}
+                      placeholder={`Nhập URL video ${q}...`}
+                      style={{ flex: 1 }}
+                    />
+                  )}
+
+                  {videoUrls[q] && (
+                    <span style={{ color: "#10b981", fontSize: "0.85rem" }}>
+                      ✅ Đã có
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="movie-access">
@@ -781,14 +571,14 @@ export default function MovieModalForm({
               type="button"
               className="cancel-btn"
               onClick={onClose}
-              disabled={uploadingPoster || uploadingVideo}
+              disabled={uploadingPoster || uploadingVideoQuality !== null}
             >
               Hủy
             </button>
             <button
               type="submit"
               className="save-movie-btn"
-              disabled={uploadingPoster || uploadingVideo}
+              disabled={uploadingPoster || uploadingVideoQuality !== null}
             >
               {editingMovie ? "💾 Lưu thay đổi" : "➕ Thêm phim"}
             </button>

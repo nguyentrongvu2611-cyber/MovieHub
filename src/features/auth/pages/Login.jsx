@@ -22,22 +22,22 @@ function Login() {
     setLoading(true);
 
     try {
-      // 1. Gửi đúng Payload theo UserLogin Schema (Username/Email & Password)
+      // 1. Gửi đúng JSON Object mà Pydantic/UserLogin schema mong đợi
       const payload = {
         username: username.trim(),
         password: password,
       };
 
-      // Tự động điều chỉnh endpoint dựa trên cấu hình baseURL của api instance
-      const endpoint = api.defaults?.baseURL?.includes("/api/v1") 
-        ? "/auth/login" 
-        : "/api/v1/auth/login";
-
-      const response = await api.post(endpoint, payload);
+      // 2. Gọi API đăng nhập với Content-Type application/json
+      const response = await api.post("/auth/login", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const { user, access_token } = response.data;
 
-      // 2. Lưu User Info và Access Token vào LocalStorage
+      // 3. Lưu token & user info
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
       }
@@ -48,7 +48,7 @@ function Login() {
 
       window.dispatchEvent(new Event("userChanged"));
 
-      // 3. Chuyển hướng theo vai trò (Role)
+      // 4. Chuyển hướng theo role
       if (user?.role === "admin") {
         navigate("/admin", { replace: true });
       } else if (user?.role === "moderator") {
@@ -59,17 +59,17 @@ function Login() {
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
 
-      // 4. Bóc tách lỗi an toàn tuyệt đối, tránh bùng phát Minified React error #31
       const detail = error.response?.data?.detail;
 
       if (Array.isArray(detail)) {
-        // Nếu FastAPI trả về mảng chi tiết lỗi Unprocessable Entity (422)
         const errorMsg = detail
-          .map((err) => `${err.loc?.[err.loc?.length - 1] || "trường"}: ${err.msg}`)
+          .map(
+            (err) =>
+              `${err.loc?.[err.loc?.length - 1] || "trường"}: ${err.msg}`,
+          )
           .join(" | ");
         setMessage(errorMsg);
       } else if (typeof detail === "string") {
-        // Nếu Backend trả về chuỗi thông báo (401, 403, 500)
         setMessage(detail);
       } else {
         setMessage("Tên đăng nhập hoặc mật khẩu không chính xác!");

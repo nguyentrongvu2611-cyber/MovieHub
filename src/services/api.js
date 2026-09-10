@@ -3,6 +3,7 @@ import axios from "axios";
 // Base URL kết nối tới Backend trên Render
 const api = axios.create({
   baseURL: "https://moviehub-backend-ln1c.onrender.com/api/v1",
+  timeout: 300000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
