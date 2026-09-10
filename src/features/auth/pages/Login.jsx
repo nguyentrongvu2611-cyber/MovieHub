@@ -22,18 +22,23 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", {
-        username,
-        password,
+      // 1. Chuyển payload sang dạng URLSearchParams (Form Data)
+      const formData = new URLSearchParams();
+      formData.append("username", username);
+      formData.append("password", password);
+
+      const response = await api.post("/auth/login", formData, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       });
 
       const user = response.data.user;
 
       localStorage.setItem("user", JSON.stringify(user));
-
       window.dispatchEvent(new Event("userChanged"));
 
-      // ĐIỀU HƯỚNG DỰA TRÊN ROLE
+      // Điều hướng dựa trên role
       if (user.role === "admin") {
         navigate("/admin", { replace: true });
       } else if (user.role === "moderator") {
@@ -43,7 +48,6 @@ function Login() {
       }
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
-
       setMessage(error.response?.data?.detail || "Đăng nhập thất bại");
     } finally {
       setLoading(false);

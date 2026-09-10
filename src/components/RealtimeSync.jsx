@@ -14,12 +14,13 @@ export default function RealtimeSync() {
 
     if (!user?.id) return;
 
-    const API_BASE_URL =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://moviehub-backend-ln1c.onrender.com/api/v1";
+    // Đảm bảo có đủ prefix /api/v1
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+      ? `${import.meta.env.VITE_API_BASE_URL}/api/v1`
+      : "https://moviehub-backend-ln1c.onrender.com/api/v1";
 
     const eventSource = new EventSource(
-      `${API_BASE_URL}/auth/stream/${user.id}`
+      `${API_BASE_URL}/auth/stream/${user.id}`,
     );
 
     eventSource.onmessage = (event) => {
@@ -27,9 +28,7 @@ export default function RealtimeSync() {
         const payload = JSON.parse(event.data);
         if (payload.type === "USER_STATUS_UPDATED") {
           const { is_premium, role } = payload.data;
-          const currentUser = JSON.parse(
-            localStorage.getItem("user") || "{}"
-          );
+          const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
           if (
             currentUser.is_premium !== is_premium ||
