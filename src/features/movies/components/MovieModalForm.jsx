@@ -114,17 +114,6 @@ export default function MovieModalForm({
   const [uploadingPoster, setUploadingPoster] = useState(false);
   const [uploadingVideoQuality, setUploadingVideoQuality] = useState(null);
 
-  // Sync lại data khi mở Modal hoặc đổi phim chỉnh sửa
-  useEffect(() => {
-    if (isOpen) {
-      setFormData(getInitialFormData(editingMovie, categoryOptions));
-      setVideoUrls(parseVideoUrls(editingMovie?.video_urls));
-      setPosterInputMode(
-        editingMovie?.poster_url?.startsWith("http") ? "url" : "upload",
-      );
-    }
-  }, [isOpen, editingMovie]);
-
   if (!isOpen) return null;
 
   const handleChange = (e) => {
@@ -152,7 +141,9 @@ export default function MovieModalForm({
     try {
       setUploadingPoster(true);
       const response = await api.post("/upload/poster", uploadFormData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       const uploadedUrl =
@@ -182,9 +173,10 @@ export default function MovieModalForm({
 
     try {
       setUploadingVideoQuality(quality);
-
       const response = await api.post("/upload/video", uploadFormData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       const uploadedUrl =
