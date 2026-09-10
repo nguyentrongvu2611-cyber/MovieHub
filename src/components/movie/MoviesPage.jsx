@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import MovieCard from "./MovieCard";
 import "./MoviesPage.css";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://moviehub-backend-ln1c.onrender.com";
 
 const CATEGORY_MAP = {
   "hanh-dong": 1,
@@ -36,21 +36,26 @@ function MoviesPage() {
 
         const filteredMovies = data.filter((movie) => {
           if (type) {
-            if (type === "single" && movie.type && movie.type !== "single") return false;
-            if (type === "series" && movie.type && movie.type !== "series") return false;
+            if (type === "single" && movie.type && movie.type !== "single")
+              return false;
+            if (type === "series" && movie.type && movie.type !== "series")
+              return false;
           }
 
           if (categorySlug) {
             const targetCategoryId = CATEGORY_MAP[categorySlug];
-            if (targetCategoryId && movie.category_id !== targetCategoryId) return false;
+            if (targetCategoryId && movie.category_id !== targetCategoryId)
+              return false;
           }
 
-          if (country && movie.country && movie.country !== country) return false;
+          if (country && movie.country && movie.country !== country)
+            return false;
           if (year && movie.year !== Number(year)) return false;
           if (
             searchQuery &&
             !movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-          ) return false;
+          )
+            return false;
 
           return true;
         });
@@ -69,7 +74,8 @@ function MoviesPage() {
 
   const getPageTitle = () => {
     if (type) return `Phim ${type === "single" ? "Lẻ" : "Bộ"}`;
-    if (categorySlug) return `Thể loại: ${categorySlug.replace(/-/g, " ").toUpperCase()}`;
+    if (categorySlug)
+      return `Thể loại: ${categorySlug.replace(/-/g, " ").toUpperCase()}`;
     if (country) return `Quốc gia: ${country.replace(/-/g, " ").toUpperCase()}`;
     if (year) return `Năm phát hành: ${year}`;
     if (searchQuery) return `Kết quả tìm kiếm: "${searchQuery}"`;
@@ -88,9 +94,7 @@ function MoviesPage() {
         <>
           <div className="movies-grid">
             {movies.length > 0 ? (
-              movies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))
+              movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
             ) : (
               <div className="no-movies">
                 Không tìm thấy phim nào phù hợp với bộ lọc hiện tại.

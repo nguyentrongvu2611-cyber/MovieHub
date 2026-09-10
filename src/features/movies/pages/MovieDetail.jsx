@@ -13,7 +13,8 @@ import {
 
 import "./MovieDetail.css";
 
-const API_BASE_URL = api.defaults.baseURL || "http://127.0.0.1:8000";
+const API_BASE_URL =
+  api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com";
 
 // Hàm hỗ trợ lấy User mới nhất từ LocalStorage
 const getCurrentUser = () => {

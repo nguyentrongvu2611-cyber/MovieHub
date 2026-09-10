@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./MovieCard.css";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://moviehub-backend-ln1c.onrender.com";
 
 function MovieCard({ movie }) {
   if (!movie) return null;

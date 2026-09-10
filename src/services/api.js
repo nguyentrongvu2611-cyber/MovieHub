@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Đổi baseURL sang URL Backend trên Render
 const api = axios.create({
-  baseURL: "https://moviehub-backend-1nic.onrender.com/api/v1",
+  baseURL: "https://moviehub-backend-ln1c.onrender.com/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -30,7 +30,7 @@ api.interceptors.response.use(
       localStorage.removeItem("user");
       if (!window.location.pathname.includes("/login")) {
         alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
-        window.location.href = "/login";
+        window.location.href = "/MovieHub/#/login";
       }
     }
     return Promise.reject(error);

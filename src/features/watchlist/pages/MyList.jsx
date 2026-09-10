@@ -7,7 +7,7 @@ import { getMovieById } from "../../movies/movieService";
 
 import "./MyList.css";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://moviehub-backend-ln1c.onrender.com";
 
 function MyList() {
   const [movies, setMovies] = useState([]);
@@ -23,7 +23,9 @@ function MyList() {
     if (url.startsWith("http")) return url;
 
     const cleanPath = url.replace(/\\/g, "/");
-    const formattedPath = cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`;
+    const formattedPath = cleanPath.startsWith("/")
+      ? cleanPath
+      : `/${cleanPath}`;
 
     return `${API_BASE_URL}${formattedPath}`;
   };
@@ -39,7 +41,7 @@ function MyList() {
         const watchlist = await getWatchlist(user.id);
 
         const movieList = await Promise.all(
-          watchlist.map((item) => getMovieById(item.movie_id || item.id))
+          watchlist.map((item) => getMovieById(item.movie_id || item.id)),
         );
 
         setMovies(movieList.filter(Boolean));
@@ -57,7 +59,9 @@ function MyList() {
     return (
       <div className="my-list-page">
         <div className="my-list-container">
-          <h2 style={{ textAlign: "center", padding: "60px 0", color: "#fff" }}>Đang tải danh sách...</h2>
+          <h2 style={{ textAlign: "center", padding: "60px 0", color: "#fff" }}>
+            Đang tải danh sách...
+          </h2>
         </div>
       </div>
     );
@@ -66,7 +70,10 @@ function MyList() {
   if (!user) {
     return (
       <div className="my-list-page">
-        <div className="my-list-container" style={{ textAlign: "center", paddingTop: "60px" }}>
+        <div
+          className="my-list-container"
+          style={{ textAlign: "center", paddingTop: "60px" }}
+        >
           <h2 style={{ color: "#fff" }}>Bạn chưa đăng nhập</h2>
           <Link to="/login" className="browse-movies-btn">
             Đăng nhập ngay
@@ -84,7 +91,11 @@ function MyList() {
         {movies.length > 0 ? (
           <div className="movie-grid">
             {movies.map((movie) => {
-              const posterSrc = movie.poster_url || movie.poster || movie.poster_path || movie.thumbnail;
+              const posterSrc =
+                movie.poster_url ||
+                movie.poster ||
+                movie.poster_path ||
+                movie.thumbnail;
 
               return (
                 <Link
@@ -92,20 +103,29 @@ function MyList() {
                   to={`/movie/${movie.id}`}
                   className="movie-card"
                 >
-                  {movie.is_premium && <span className="movie-badge">PREMIUM</span>}
+                  {movie.is_premium && (
+                    <span className="movie-badge">PREMIUM</span>
+                  )}
 
                   <img
                     className="poster-img"
                     src={getPosterUrl(posterSrc)}
                     alt={movie.title}
                     onError={(e) => {
-                      e.target.src = "https://placehold.co/300x450?text=No+Poster";
+                      e.target.src =
+                        "https://placehold.co/300x450?text=No+Poster";
                     }}
                   />
 
                   <div className="play-btn-overlay">
                     <div className="play-icon-circle">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path d="M8 5V19L19 12L8 5Z" fill="#ffffff" />
                       </svg>
                     </div>
@@ -113,7 +133,10 @@ function MyList() {
 
                   <div className="movie-card-info">
                     <h3 title={movie.title}>{movie.title}</h3>
-                    <p>{movie.year} {movie.duration ? `| ${movie.duration} phút` : ""}</p>
+                    <p>
+                      {movie.year}{" "}
+                      {movie.duration ? `| ${movie.duration} phút` : ""}
+                    </p>
                   </div>
                 </Link>
               );

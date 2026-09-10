@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import MovieRow from "../../../components/movie/MovieRow";
 import "./Movies.css";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://moviehub-backend-ln1c.onrender.com";
 
 const getPosterUrl = (url) => {
   if (!url) return "https://placehold.co/300x450?text=No+Poster";

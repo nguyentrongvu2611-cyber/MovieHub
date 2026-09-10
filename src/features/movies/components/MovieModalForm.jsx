@@ -30,7 +30,7 @@ const DEFAULT_TOPICS = CONST_TOPICS || [
 ];
 
 const BACKEND_BASE_URL = (
-  api.defaults.baseURL || "http://127.0.0.1:8000"
+  api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com"
 ).replace(/\/api\/v1\/?$/, "");
 
 const getInitialFormData = (movie, categoryOptions = []) => {
@@ -112,7 +112,7 @@ export default function MovieModalForm({
     return text
       .replace(/^\[SSE LOG\]:\s*/gi, "")
       .replace(/^(?:-->\s*)?\[Upload Route\]\s*/gi, "")
-      .replace(/^[🚀🎉✅]\s*/gu, "") 
+      .replace(/^[🚀🎉✅]\s*/gu, "")
       .trim();
   };
   if (editingMovie !== prevMovie || isOpen !== prevIsOpen) {
@@ -138,74 +138,96 @@ export default function MovieModalForm({
   }, [convertLogs]);
 
   // Lắng nghe tiến trình HLS từ Server via SSE (Server-Sent Events)
- useEffect(() => {
-  if (!uploadingVideo) return;
+  useEffect(() => {
+    if (!uploadingVideo) return;
 
-  // Mở kết nối EventSource SSE
-  const eventSource = new EventSource(
-    `${BACKEND_BASE_URL}/api/v1/upload/stream-progress`
-  );
+    // Mở kết nối EventSource SSE
+    const eventSource = new EventSource(
+      `${BACKEND_BASE_URL}/api/v1/upload/stream-progress`,
+    );
 
-  eventSource.onmessage = (event) => {
-    let rawText = event.data;
-    try {
-      const parsed = JSON.parse(event.data);
-      if (parsed.message) rawText = parsed.message;
-    } catch {
-      // Giữ nguyên rawText nếu không phải JSON
-    }
+    eventSource.onmessage = (event) => {
+      let rawText = event.data;
+      try {
+        const parsed = JSON.parse(event.data);
+        if (parsed.message) rawText = parsed.message;
+      } catch {
+        // Giữ nguyên rawText nếu không phải JSON
+      }
 
-    const cleanMsg = cleanSseMessage(rawText);
-    if (!cleanMsg) return;
+      const cleanMsg = cleanSseMessage(rawText);
+      if (!cleanMsg) return;
 
-    // 1. Cập nhật log vào Terminal nhỏ trong Modal
-    setConvertLogs((prev) => [...prev, cleanMsg]);
+      // 1. Cập nhật log vào Terminal nhỏ trong Modal
+      setConvertLogs((prev) => [...prev, cleanMsg]);
 
-    // 2. Kiểm tra trạng thái hoàn thành
-    const isFinished = cleanMsg.toLowerCase().includes("hoàn tất xử lý tất cả");
+      // 2. Kiểm tra trạng thái hoàn thành
+      const isFinished = cleanMsg
+        .toLowerCase()
+        .includes("hoàn tất xử lý tất cả");
 
-    if (isFinished) {
-      toast.update("sse-convert-toast", {
-        render: (
-          <div style={{ padding: "2px 0" }}>
-            <div style={{ fontWeight: "bold", color: "#4adb83", fontSize: "13px" }}>
-              🎉 Hoàn tất xử lý tất cả độ phân giải!
+      if (isFinished) {
+        toast.update("sse-convert-toast", {
+          render: (
+            <div style={{ padding: "2px 0" }}>
+              <div
+                style={{
+                  fontWeight: "bold",
+                  color: "#4adb83",
+                  fontSize: "13px",
+                }}
+              >
+                🎉 Hoàn tất xử lý tất cả độ phân giải!
+              </div>
             </div>
-          </div>
-        ),
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-        closeButton: true,
-      });
+          ),
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+          closeButton: true,
+        });
+        eventSource.close();
+      } else {
+        // 3. Cập nhật realtime từng độ phân giải (480p, 720p, 1080p...)
+        toast.update("sse-convert-toast", {
+          render: (
+            <div style={{ padding: "2px 0", maxWidth: "260px" }}>
+              <div
+                style={{
+                  fontWeight: "600",
+                  fontSize: "13px",
+                  color: "#61afef",
+                  marginBottom: "3px",
+                }}
+              >
+                ⚙️ Tiến trình Convert HLS
+              </div>
+              <div
+                style={{
+                  fontSize: "12px",
+                  color: "#abb2bf",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                }}
+              >
+                👉 {cleanMsg}
+              </div>
+            </div>
+          ),
+          type: "info",
+          isLoading: true,
+        });
+      }
+    };
+
+    eventSource.onerror = () => {
       eventSource.close();
-    } else {
-      // 3. Cập nhật realtime từng độ phân giải (480p, 720p, 1080p...)
-      toast.update("sse-convert-toast", {
-        render: (
-          <div style={{ padding: "2px 0", maxWidth: "260px" }}>
-            <div style={{ fontWeight: "600", fontSize: "13px", color: "#61afef", marginBottom: "3px" }}>
-              ⚙️ Tiến trình Convert HLS
-            </div>
-            <div style={{ fontSize: "12px", color: "#abb2bf", whiteSpace: "normal", wordBreak: "break-word" }}>
-              👉 {cleanMsg}
-            </div>
-          </div>
-        ),
-        type: "info",
-        isLoading: true,
-      });
-    }
-  };
+    };
 
-  eventSource.onerror = () => {
-    eventSource.close();
-  };
-
-  return () => {
-    eventSource.close();
-  };
-}, [uploadingVideo]);
+    return () => {
+      eventSource.close();
+    };
+  }, [uploadingVideo]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -247,123 +269,156 @@ export default function MovieModalForm({
     }
   };
 
-const handleUploadVideo = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+  const handleUploadVideo = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const uploadFormData = new FormData();
-  uploadFormData.append("file", file);
+    const uploadFormData = new FormData();
+    uploadFormData.append("file", file);
 
-  try {
-    setUploadingVideo(true);
-    setUploadProgress(0);
-    setConvertLogs([]);
+    try {
+      setUploadingVideo(true);
+      setUploadProgress(0);
+      setConvertLogs([]);
 
-    // 1. Tạo Toast hiển thị ban đầu
-    toast.loading(
-      <div style={{ padding: "2px 0" }}>
-        <div style={{ fontWeight: "600", fontSize: "13px", color: "#61afef" }}>
-          🚀 Đang kết nối tiến trình xử lý...
-        </div>
-      </div>,
-      { toastId: "sse-convert-toast" }
-    );
+      // 1. Tạo Toast hiển thị ban đầu
+      toast.loading(
+        <div style={{ padding: "2px 0" }}>
+          <div
+            style={{ fontWeight: "600", fontSize: "13px", color: "#61afef" }}
+          >
+            🚀 Đang kết nối tiến trình xử lý...
+          </div>
+        </div>,
+        { toastId: "sse-convert-toast" },
+      );
 
-    // 2. Kích hoạt kết nối SSE NGAY LẬP TỨC trước khi POST file
-    const eventSource = new EventSource(
-      `${BACKEND_BASE_URL}/api/v1/upload/stream-progress`
-    );
+      // 2. Kích hoạt kết nối SSE NGAY LẬP TỨC trước khi POST file
+      const eventSource = new EventSource(
+        `${BACKEND_BASE_URL}/api/v1/upload/stream-progress`,
+      );
 
-    eventSource.onmessage = (e) => {
-      let rawText = e.data;
-      try {
-        const parsed = JSON.parse(e.data);
-        if (parsed.message) rawText = parsed.message;
-      } catch {
-        // Giữ nguyên rawText
+      // THÊM: Xử lý lỗi để tránh spam console khi đứt kết nối
+      eventSource.onerror = (err) => {
+        console.error("Lỗi kết nối SSE Upload:", err);
+        eventSource.close(); // Đóng stream khi xảy ra lỗi kết nối
+      };
+
+      eventSource.onmessage = (e) => {
+        let rawText = e.data;
+        try {
+          const parsed = JSON.parse(e.data);
+          if (parsed.message) rawText = parsed.message;
+        } catch {
+          // Giữ nguyên rawText
+        }
+
+        const cleanMsg = cleanSseMessage(rawText);
+        if (!cleanMsg) return;
+
+        // Cập nhật log console trong Modal
+        setConvertLogs((prev) => [...prev, cleanMsg]);
+
+        // Cập nhật Toast đồng bộ 100% với Backend
+        const isFinished = cleanMsg
+          .toLowerCase()
+          .includes("hoàn tất xử lý tất cả");
+
+        if (isFinished) {
+          toast.update("sse-convert-toast", {
+            render: (
+              <div style={{ padding: "2px 0" }}>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    color: "#4adb83",
+                    fontSize: "13px",
+                  }}
+                >
+                  🎉 Hoàn tất xử lý tất cả độ phân giải!
+                </div>
+              </div>
+            ),
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+            closeButton: true,
+          });
+          eventSource.close(); // Đóng SSE khi xong hẳn
+        } else {
+          toast.update("sse-convert-toast", {
+            render: (
+              <div style={{ padding: "2px 0", maxWidth: "260px" }}>
+                <div
+                  style={{
+                    fontWeight: "600",
+                    fontSize: "13px",
+                    color: "#61afef",
+                    marginBottom: "3px",
+                  }}
+                >
+                  ⚙️ Tiến trình HLS
+                </div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#abb2bf",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  👉 {cleanMsg}
+                </div>
+              </div>
+            ),
+            type: "info",
+            isLoading: true,
+          });
+        }
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+      };
+
+      // 3. Tiến hành POST upload file lên server (SSE đã sẵn sàng hứng log)
+      const response = await api.post("/upload/video", uploadFormData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
+          setUploadProgress(percent);
+        },
+      });
+
+      const uploadedUrl =
+        response.data?.url ||
+        response.data?.video_url ||
+        response.data?.file_path;
+      const uploadedVideoUrls = response.data?.video_urls || null;
+
+      if (uploadedUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          video_url: uploadedUrl,
+          video_urls: uploadedVideoUrls,
+        }));
       }
-
-      const cleanMsg = cleanSseMessage(rawText);
-      if (!cleanMsg) return;
-
-      // Cập nhật log console trong Modal
-      setConvertLogs((prev) => [...prev, cleanMsg]);
-
-      // Cập nhật Toast đồng bộ 100% với Backend
-      const isFinished = cleanMsg.toLowerCase().includes("hoàn tất xử lý tất cả");
-
-      if (isFinished) {
-        toast.update("sse-convert-toast", {
-          render: (
-            <div style={{ padding: "2px 0" }}>
-              <div style={{ fontWeight: "bold", color: "#4adb83", fontSize: "13px" }}>
-                🎉 Hoàn tất xử lý tất cả độ phân giải!
-              </div>
-            </div>
-          ),
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-          closeButton: true,
-        });
-        eventSource.close(); // Đóng SSE khi xong hẳn
-      } else {
-        toast.update("sse-convert-toast", {
-          render: (
-            <div style={{ padding: "2px 0", maxWidth: "260px" }}>
-              <div style={{ fontWeight: "600", fontSize: "13px", color: "#61afef", marginBottom: "3px" }}>
-                ⚙️ Tiến trình HLS
-              </div>
-              <div style={{ fontSize: "12px", color: "#abb2bf", whiteSpace: "normal", wordBreak: "break-word" }}>
-                👉 {cleanMsg}
-              </div>
-            </div>
-          ),
-          type: "info",
-          isLoading: true,
-        });
-      }
-    };
-
-    eventSource.onerror = () => {
-      eventSource.close();
-    };
-
-    // 3. Tiến hành POST upload file lên server (SSE đã sẵn sàng hứng log)
-    const response = await api.post("/upload/video", uploadFormData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      onUploadProgress: (progressEvent) => {
-        const percent = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        setUploadProgress(percent);
-      },
-    });
-
-    const uploadedUrl = response.data?.url || response.data?.video_url || response.data?.file_path;
-    const uploadedVideoUrls = response.data?.video_urls || null;
-
-    if (uploadedUrl) {
-      setFormData((prev) => ({
-        ...prev,
-        video_url: uploadedUrl,
-        video_urls: uploadedVideoUrls,
-      }));
+    } catch (error) {
+      console.error("Lỗi upload video:", error);
+      toast.update("sse-convert-toast", {
+        render: `❌ Lỗi: ${error?.response?.data?.detail || "Upload video thất bại!"}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+        closeButton: true,
+      });
+    } finally {
+      setUploadingVideo(false);
+      event.target.value = "";
     }
-  } catch (error) {
-    console.error("Lỗi upload video:", error);
-    toast.update("sse-convert-toast", {
-      render: `❌ Lỗi: ${error?.response?.data?.detail || "Upload video thất bại!"}`,
-      type: "error",
-      isLoading: false,
-      autoClose: 4000,
-      closeButton: true,
-    });
-  } finally {
-    setUploadingVideo(false);
-    event.target.value = "";
-  }
-};
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();

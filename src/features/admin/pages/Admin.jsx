@@ -33,7 +33,8 @@ const formatAvatarSrc = (avatar) => {
   if (!avatar) return "";
   if (avatar.startsWith("http://") || avatar.startsWith("https://"))
     return avatar;
-  if (avatar.startsWith("/")) return `http://127.0.0.1:8000${avatar}`;
+  if (avatar.startsWith("/"))
+    return `https://moviehub-backend-ln1c.onrender.com${avatar}`;
   if (avatar.startsWith("data:image/")) return avatar;
   return `data:image/png;base64,${avatar}`;
 };
@@ -785,7 +786,7 @@ function Admin() {
                       src={
                         item.poster_url?.startsWith("http")
                           ? item.poster_url
-                          : `http://127.0.0.1:8000${item.poster_url}`
+                          : `https://moviehub-backend-ln1c.onrender.com${item.poster_url}`
                       }
                       alt={item.title}
                       className="history-poster"

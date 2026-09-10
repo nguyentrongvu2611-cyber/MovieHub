@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // 1. Component Toast - Đã nâng z-index lên z-[9999] để đè lên mọi Modal
 export const Toast = ({ message, isDone }) => {
@@ -17,8 +17,12 @@ export const Toast = ({ message, isDone }) => {
         </div>
       )}
       <div className="flex flex-col overflow-hidden">
-        <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Tiến trình Video</span>
-        <span className="text-sm font-medium text-slate-100 truncate">{message}</span>
+        <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">
+          Tiến trình Video
+        </span>
+        <span className="text-sm font-medium text-slate-100 truncate">
+          {message}
+        </span>
       </div>
     </div>
   );
@@ -30,7 +34,9 @@ export const TranscodeProgress = ({ onComplete, onToastChange }) => {
   const [statusText, setStatusText] = useState("Đang kết nối luồng xử lý...");
 
   useEffect(() => {
-    const eventSource = new EventSource("http://127.0.0.1:8000/stream-progress");
+    const eventSource = new EventSource(
+      "https://moviehub-backend-ln1c.onrender.com/stream-progress",
+    );
 
     eventSource.onmessage = (event) => {
       try {
@@ -39,14 +45,17 @@ export const TranscodeProgress = ({ onComplete, onToastChange }) => {
 
         if (msg) {
           // Làm sạch log để hiển thị Toast đẹp hơn (loại bỏ tiền tố [Upload Route])
-          const cleanMsg = msg.replace(/^(-->|🚀|🎉|✅|\s*\[Upload Route\]\s*)*/g, '').trim();
+          const cleanMsg = msg
+            .replace(/^(-->|🚀|🎉|✅|\s*\[Upload Route\]\s*)*/g, "")
+            .trim();
           setStatusText(cleanMsg || msg);
 
           // Bắn dữ liệu Toast ra ngoài
           if (onToastChange) {
             onToastChange({
               message: cleanMsg || msg,
-              isDone: msg.includes("Hoàn tất xử lý") || msg.includes("thành công")
+              isDone:
+                msg.includes("Hoàn tất xử lý") || msg.includes("thành công"),
             });
           }
 
@@ -59,10 +68,13 @@ export const TranscodeProgress = ({ onComplete, onToastChange }) => {
           else if (msg.includes("convert 720p")) setProgress(70);
           else if (msg.includes("Hoàn tất 720p")) setProgress(85);
           else if (msg.includes("convert 1080p")) setProgress(92);
-          else if (msg.includes("Hoàn tất 1080p") || msg.includes("Hoàn tất xử lý")) {
+          else if (
+            msg.includes("Hoàn tất 1080p") ||
+            msg.includes("Hoàn tất xử lý")
+          ) {
             setProgress(100);
             eventSource.close();
-            
+
             if (onComplete) {
               setTimeout(() => onComplete(), 1000);
             }
@@ -90,10 +102,12 @@ export const TranscodeProgress = ({ onComplete, onToastChange }) => {
           <span className="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />
           <span className="truncate">{statusText}</span>
         </span>
-        <span className="text-xs font-bold text-slate-300 font-mono ml-2">{progress}%</span>
+        <span className="text-xs font-bold text-slate-300 font-mono ml-2">
+          {progress}%
+        </span>
       </div>
       <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-        <div 
+        <div
           className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400 transition-all duration-300 ease-out rounded-full shadow-[0_0_12px_rgba(99,102,241,0.6)]"
           style={{ width: `${progress}%` }}
         />

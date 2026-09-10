@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 // Tự động lấy Backend Base URL từ cấu hình axios instance
 const BACKEND_BASE_URL = (
-  api.defaults.baseURL || "http://127.0.0.1:8000"
+  api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com"
 ).replace(/\/api\/v1\/?$/, "");
 
 // Ánh xạ slug/mã quốc gia sang tên tiếng Việt
@@ -61,7 +61,7 @@ export default function MovieManagement() {
   // 1. Tải danh sách phim
   const loadMovies = useCallback(async () => {
     try {
-      const response = await api.get("/movies/");
+      const response = await api.get("/movies");
       const data = Array.isArray(response.data)
         ? response.data
         : response.data.movies || [];
@@ -150,7 +150,9 @@ export default function MovieManagement() {
       await Promise.all([loadMovies(), loadCategories()]);
 
       toast.success(
-        editingMovie ? "🎉 Đã cập nhật phim thành công!" : "🎉 Đã thêm phim mới thành công!"
+        editingMovie
+          ? "🎉 Đã cập nhật phim thành công!"
+          : "🎉 Đã thêm phim mới thành công!",
       );
     } catch (error) {
       console.error("Lỗi lưu phim:", error);
@@ -158,7 +160,9 @@ export default function MovieManagement() {
       const responseData = error?.response?.data;
       if (responseData?.detail && Array.isArray(responseData.detail)) {
         const errorMessages = responseData.detail
-          .map((err) => `${err.loc?.[err.loc.length - 1] || "Trường"}: ${err.msg}`)
+          .map(
+            (err) => `${err.loc?.[err.loc.length - 1] || "Trường"}: ${err.msg}`,
+          )
           .join(" | ");
         toast.error(`Lỗi dữ liệu nhập vào: ${errorMessages}`);
       } else {
@@ -173,7 +177,7 @@ export default function MovieManagement() {
   const handleDelete = async (movie) => {
     if (
       !window.confirm(
-        `Bạn có chắc muốn xóa phim "${movie.title}"?\nThao tác này không thể khôi phục!`
+        `Bạn có chắc muốn xóa phim "${movie.title}"?\nThao tác này không thể khôi phục!`,
       )
     ) {
       return;
@@ -201,7 +205,7 @@ export default function MovieManagement() {
     const catId = movie.category_id || movie.category;
     if (catId) {
       const foundCategory = categories.find(
-        (c) => String(c.id) === String(catId)
+        (c) => String(c.id) === String(catId),
       );
       if (foundCategory) return foundCategory.name;
     }

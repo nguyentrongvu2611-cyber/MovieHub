@@ -47,7 +47,7 @@ const getPosterUrl = (movie) => {
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
 
   // Ghép Domain Backend vào đường dẫn tương đối (/uploads/...)
-  const baseUrl = "http://127.0.0.1:8000";
+  const baseUrl = "https://moviehub-backend-ln1c.onrender.com";
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
 
   return `${baseUrl}${cleanPath}`;

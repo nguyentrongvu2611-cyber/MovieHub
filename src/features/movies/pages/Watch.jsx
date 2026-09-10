@@ -43,7 +43,7 @@ function Watch() {
     currentUser?.is_premium === true ||
     currentUser?.is_premium === "true" ||
     currentUser?.is_premium === 1 ||
-    currentUser?.role === "admin"
+    currentUser?.role === "admin",
   );
 
   useEffect(() => {
@@ -61,15 +61,23 @@ function Watch() {
 
         let isMoviePremium = false;
         if (data.is_free !== undefined && data.is_free !== null) {
-          isMoviePremium = data.is_free === false || data.is_free === "false" || data.is_free === 0;
+          isMoviePremium =
+            data.is_free === false ||
+            data.is_free === "false" ||
+            data.is_free === 0;
         } else if (data.is_premium !== undefined && data.is_premium !== null) {
-          isMoviePremium = data.is_premium === true || data.is_premium === "true" || data.is_premium === 1;
+          isMoviePremium =
+            data.is_premium === true ||
+            data.is_premium === "true" ||
+            data.is_premium === 1;
         } else {
           isMoviePremium = data.access_type === "premium";
         }
 
         if (isMoviePremium && !isPremiumUser) {
-          alert("🔒 Đây là phim độc quyền Premium! Vui lòng nâng cấp tài khoản để thưởng thức.");
+          alert(
+            "🔒 Đây là phim độc quyền Premium! Vui lòng nâng cấp tài khoản để thưởng thức.",
+          );
           navigate("/movies");
           return;
         }
@@ -102,7 +110,7 @@ function Watch() {
         if (err.response?.status === 403) {
           setStreamError(
             err.response.data?.detail ||
-              "⚠️ Bạn đã vượt quá số màn hình cho phép xem cùng lúc!"
+              "⚠️ Bạn đã vượt quá số màn hình cho phép xem cùng lúc!",
           );
         }
       }
@@ -114,7 +122,9 @@ function Watch() {
     return () => {
       clearInterval(intervalId);
       const leavePath = `/streaming/leave/${userId}/${sessionIdRef.current}`;
-      const baseUrl = api.defaults.baseURL || "http://127.0.0.1:8000/api/v1";
+      const baseUrl =
+        api.defaults.baseURL ||
+        "https://moviehub-backend-ln1c.onrender.com/api/v1";
       const fullLeaveUrl = baseUrl.endsWith("/")
         ? `${baseUrl.slice(0, -1)}${leavePath}`
         : `${baseUrl}${leavePath}`;
@@ -146,14 +156,16 @@ function Watch() {
   // FIX 1: Ghép URL chính xác cho cả domain absolute và path relative
   const getFullVideoUrl = (rawUrl) => {
     if (!rawUrl) return null;
-    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))
+      return rawUrl;
 
-    const apiBase = api.defaults.baseURL || "http://127.0.0.1:8000";
+    const apiBase =
+      api.defaults.baseURL || "https://moviehub-backend-ln1c.onrender.com";
     try {
       const origin = new URL(apiBase).origin;
       return `${origin}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
     } catch {
-      return `http://127.0.0.1:8000${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+      return `https://moviehub-backend-ln1c.onrender.com${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
     }
   };
 
@@ -178,7 +190,7 @@ function Watch() {
       alert(
         "🔒 Chất lượng " +
           quality +
-          " chỉ dành cho tài khoản PREMIUM! Vui lòng nâng cấp gói để trải nghiệm sắc nét hơn."
+          " chỉ dành cho tài khoản PREMIUM! Vui lòng nâng cấp gói để trải nghiệm sắc nét hơn.",
       );
       return;
     }
@@ -252,9 +264,18 @@ function Watch() {
         minHeight: "100vh",
       }}
     >
-      <div className="watch-container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div
+        className="watch-container"
+        style={{ maxWidth: "1200px", margin: "0 auto" }}
+      >
         <div style={{ marginBottom: "20px" }}>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "8px" }}>
+          <h1
+            style={{
+              fontSize: "28px",
+              fontWeight: "bold",
+              marginBottom: "8px",
+            }}
+          >
             {movie.title}
           </h1>
           <div
@@ -272,7 +293,8 @@ function Watch() {
             <span>•</span>
             <span
               style={{
-                backgroundColor: movie.is_free === false ? "#cfc840" : "#10b981",
+                backgroundColor:
+                  movie.is_free === false ? "#cfc840" : "#10b981",
                 color: "#000",
                 padding: "2px 8px",
                 borderRadius: "4px",
@@ -296,7 +318,13 @@ function Watch() {
               margin: "20px 0",
             }}
           >
-            <h3 style={{ fontSize: "22px", color: "#f87171", marginBottom: "12px" }}>
+            <h3
+              style={{
+                fontSize: "22px",
+                color: "#f87171",
+                marginBottom: "12px",
+              }}
+            >
               🚫 Không thể phát Video
             </h3>
             <p style={{ color: "#fca5a5", fontSize: "16px" }}>{streamError}</p>
@@ -338,13 +366,20 @@ function Watch() {
                 borderTop: "1px solid #374151",
               }}
             >
-              <span style={{ fontSize: "14px", fontWeight: "600", color: "#d1d5db" }}>
+              <span
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  color: "#d1d5db",
+                }}
+              >
                 ⚙️ Chất lượng video:
               </span>
 
               <div style={{ display: "flex", gap: "8px" }}>
                 {["480p", "720p", "1080p"].map((q) => {
-                  const isLocked = (q === "720p" || q === "1080p") && !isPremiumUser;
+                  const isLocked =
+                    (q === "720p" || q === "1080p") && !isPremiumUser;
                   const isActive = selectedQuality === q;
 
                   return (
@@ -362,8 +397,8 @@ function Watch() {
                         backgroundColor: isActive
                           ? "#3b82f6"
                           : isLocked
-                          ? "#374151"
-                          : "#4b5563",
+                            ? "#374151"
+                            : "#4b5563",
                         color: isLocked ? "#9ca3af" : "#ffffff",
                         opacity: isLocked ? 0.7 : 1,
                         display: "flex",
@@ -388,7 +423,9 @@ function Watch() {
               margin: "20px 0",
             }}
           >
-            <h3 style={{ fontSize: "20px", color: "#f3f4f6" }}>🎬 Chưa có file Video</h3>
+            <h3 style={{ fontSize: "20px", color: "#f3f4f6" }}>
+              🎬 Chưa có file Video
+            </h3>
           </div>
         )}
 

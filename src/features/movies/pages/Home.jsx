@@ -5,7 +5,7 @@ import "./Home.css";
 import MovieRow from "../../../components/movie/MovieRow";
 import { getMovies } from "../movieService";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://moviehub-backend-ln1c.onrender.com";
 
 const getPosterUrl = (url) => {
   if (!url) return "https://placehold.co/300x450?text=No+Poster";
@@ -118,12 +118,12 @@ function Home() {
       <section
         className="hero"
         style={{
-      //    backgroundImage: featuredMovie?.poster_url
-       //     ? `linear-gradient(90deg, #141414 0%, rgba(67, 66, 66, 0.7) 45%, rgba(20,20,20,0.2) 100%), linear-gradient(to top, #141414 0%, transparent 50%), url("${featuredMovie.poster_url}")`
-       //     : `linear-gradient(90deg, #141414 0%, rgba(20,20,20,0.7) 45%), url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80")`,
-backgroundImage: `linear-gradient(90deg, #141414 0%, rgba(20,20,20,0.8) 40%, transparent 100%), 
+          //    backgroundImage: featuredMovie?.poster_url
+          //     ? `linear-gradient(90deg, #141414 0%, rgba(67, 66, 66, 0.7) 45%, rgba(20,20,20,0.2) 100%), linear-gradient(to top, #141414 0%, transparent 50%), url("${featuredMovie.poster_url}")`
+          //     : `linear-gradient(90deg, #141414 0%, rgba(20,20,20,0.7) 45%), url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80")`,
+          backgroundImage: `linear-gradient(90deg, #141414 0%, rgba(20,20,20,0.8) 40%, transparent 100%), 
                       linear-gradient(to top, #141414 0%, transparent 50%), 
-                      url(http://127.0.0.1:8000/uploads/posters/9f5e2f3f-a138-443a-af09-97f4225d1df5.jpg)`,
+                      url(https://moviehub-backend-ln1c.onrender.com/uploads/posters/9f5e2f3f-a138-443a-af09-97f4225d1df5.jpg)`,
         }}
       >
         <div className="hero-content">

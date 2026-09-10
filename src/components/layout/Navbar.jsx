@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { searchMovies } from "../../features/movies/movieService";
 import "./Navbar.css";
 
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "https://moviehub-backend-ln1c.onrender.com";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ function Navbar() {
   // 💥 XỬ LÝ CLICK VÀO CHỮ PREMIUM
   const handlePremiumClick = (e) => {
     e.preventDefault();
-    
+
     // Kiểm tra cờ is_premium hoặc role của user
     const isPremiumUser = user && (user.is_premium || user.role === "premium");
 
@@ -151,7 +151,7 @@ function Navbar() {
           </div>
 
           {user && <Link to="/my-list">Danh sách của tôi</Link>}
-          
+
           {/* 💥 THAY ĐỔI TẠI ĐÂY */}
           <a
             href="/premium"
