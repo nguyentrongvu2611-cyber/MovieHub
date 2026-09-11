@@ -10,10 +10,7 @@ function MovieRow({ title, movies = [] }) {
 
       <div className="movie-horizontal-list">
         {movies.map((movie) => (
-          <MovieCard
-            key={movie.id || movie._id}
-            movie={movie}
-          />
+          <MovieCard key={movie.id || movie._id} movie={movie} />
         ))}
       </div>
     </div>
