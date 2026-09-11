@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
+import Banner from "../../../components/layout/banner";
 import MovieRow from "../../../components/movie/MovieRow";
 import { getMovies } from "../movieService";
 
@@ -21,9 +21,7 @@ function Home() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  // 1. LẤY THÔNG TIN USER TỪ LOCALSTORAGE
   const [user] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -38,6 +36,9 @@ function Home() {
         const formattedMovies = movieArray.map((m) => ({
           ...m,
           poster_url: getPosterUrl(m.poster_url || m.poster),
+          backdrop_url: getPosterUrl(
+            m.backdrop_url || m.backdrop || m.poster_url || m.poster,
+          ),
         }));
 
         setMovies(formattedMovies);
@@ -51,23 +52,6 @@ function Home() {
 
     loadMovies();
   }, []);
-
-  // 2. HÀM XỬ LÝ KHI BẤM NÚT XEM NGAY Ở HERO BANNER
-  const handlePlayMovie = (movie) => {
-    if (!movie) return;
-
-    // Nếu phim là Premium mà người dùng chưa có tài khoản Premium
-    if (movie.is_premium && !user?.is_premium) {
-      alert(
-        "Phim này dành riêng cho tài khoản Premium. Vui lòng nâng cấp gói để xem!",
-      );
-      navigate("/premium"); // Chuyển sang /premium
-      return;
-    }
-
-    // Nếu là phim miễn phí hoặc user đã có Premium
-    navigate(`/watch/${movie.id}`);
-  };
 
   const filterBySection = (sectionKey, categoryKeywords = []) => {
     return movies.filter((movie) => {
@@ -114,69 +98,34 @@ function Home() {
 
   return (
     <div className="home">
-      {/* HERO BANNER */}
-      <section
-        className="hero"
-        style={{
-          //    backgroundImage: featuredMovie?.poster_url
-          //     ? `linear-gradient(90deg, #141414 0%, rgba(67, 66, 66, 0.7) 45%, rgba(20,20,20,0.2) 100%), linear-gradient(to top, #141414 0%, transparent 50%), url("${featuredMovie.poster_url}")`
-          //     : `linear-gradient(90deg, #141414 0%, rgba(20,20,20,0.7) 45%), url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80")`,
-          backgroundImage: `linear-gradient(90deg, #141414 0%, rgba(20,20,20,0.8) 40%, transparent 100%), 
-                      linear-gradient(to top, #141414 0%, transparent 50%), 
-                      url(https://moviehub-backend-ln1c.onrender.com/uploads/posters/9f5e2f3f-a138-443a-af09-97f4225d1df5.jpg)`,
-        }}
-      >
-        <div className="hero-content">
-          <h1>{featuredMovie?.title || "MOVIEHUB"}</h1>
-          <p className="hero-description">
-            {featuredMovie?.description
-              ? featuredMovie.description.length > 180
-                ? `${featuredMovie.description.substring(0, 180)}...`
-                : featuredMovie.description
-              : "Xem những bộ phim nổi bật, phim chiếu rạp, phim lẻ mới nhất và anime hấp dẫn."}
-          </p>
-
-          <div className="hero-buttons">
-            {/* THAY ĐỔI SỰ KIỆN CLICK Ở ĐÂY */}
-            <button
-              className="play-btn"
-              onClick={() => handlePlayMovie(featuredMovie)}
-            >
-              ▶ Xem ngay
-            </button>
-            <button
-              className="info-btn"
-              onClick={() =>
-                featuredMovie && navigate(`/movie/${featuredMovie.id}`)
-              }
-            >
-              ℹ Thông tin
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* BANNER NỔI BẬT */}
+      <Banner
+        bannerUrl={getPosterUrl(
+          "uploads/posters/178a0901-a13b-4395-840b-cd6cdafe9dd5.jpg",
+        )}
+        movie={featuredMovie}
+        user={user}
+      />
 
       {/* DANH SÁCH HÀNG PHIM */}
       <div className="home-movies">
         {trendingMovies.length > 0 && (
-          <MovieRow title="🔥 PHIM THỊNH HÀNH" movies={trendingMovies} />
+          <MovieRow title="PHIM THỊNH HÀNH" movies={trendingMovies} />
         )}
 
         {cinemaMovies.length > 0 && (
-          <MovieRow title="🎬 PHIM CHIẾU RẠP MỚI" movies={cinemaMovies} />
+          <MovieRow title="PHIM CHIẾU RẠP MỚI" movies={cinemaMovies} />
         )}
 
         {singleMovies.length > 0 && (
-          <MovieRow title="📼 PHIM LẺ MỚI CẬP NHẬT" movies={singleMovies} />
+          <MovieRow title="PHIM LẺ MỚI CẬP NHẬT" movies={singleMovies} />
         )}
 
         {animeMovies.length > 0 && (
-          <MovieRow title="⛩️ PHIM HOẠT HÌNH & ANIME" movies={animeMovies} />
+          <MovieRow title="PHIM HOẠT HÌNH & ANIME" movies={animeMovies} />
         )}
 
-        {movies.length > 0 && (
-          <MovieRow title="🌐 TẤT CẢ PHIM" movies={movies} />
-        )}
+        {movies.length > 0 && <MovieRow title="TẤT CẢ PHIM" movies={movies} />}
       </div>
     </div>
   );

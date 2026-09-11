@@ -1,23 +1,19 @@
 import MovieCard from "./MovieCard";
+import "./MovieRow.css";
 
 function MovieRow({ title, movies = [] }) {
-  return (
-    <div style={{ marginBottom: "32px", padding: "0 20px" }}>
-      <h2 style={{ color: "#fff", fontSize: "18px", marginBottom: "14px" }}>
-        🔥 {title}
-      </h2>
+  if (!movies || movies.length === 0) return null;
 
-      {/* Container xếp 8 phim 1 hàng */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(8, 1fr)", /* Chia đều 8 cột */
-          gap: "12px",
-          width: "100%",
-        }}
-      >
+  return (
+    <div className="movie-row-container">
+      <h2 className="movie-row-title">{title}</h2>
+
+      <div className="movie-horizontal-list">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard
+            key={movie.id || movie._id}
+            movie={movie}
+          />
         ))}
       </div>
     </div>

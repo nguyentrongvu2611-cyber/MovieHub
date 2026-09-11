@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import api from "../../../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -50,6 +50,7 @@ const parseVideoUrls = (rawVideoUrls) => {
       "1080p": parsed["1080p"] || "",
     };
   } catch (e) {
+    console.error("Lỗi xử lý:", e);
     return { "480p": "", "720p": "", "1080p": "" };
   }
 };

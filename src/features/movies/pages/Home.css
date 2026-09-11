@@ -109,3 +109,16 @@
   margin: 0 auto;
   padding: 0 40px;
 }
+/* XÓA ĐỆM 2 BÊN CỦA CONTAINER TRANG HOME TRÊN MOBILE */
+@media (max-width: 767px) {
+  .home,
+  .home-movies,
+  div.home-movies {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+}

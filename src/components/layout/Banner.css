@@ -1,0 +1,141 @@
+/* ==========================================
+   HERO BANNER
+   ========================================== */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 70vh;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 4% 60px 4%;
+  box-sizing: border-box;
+}
+
+/* Lớp phủ dốc giúp làm nổi bật chữ */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 15, 15, 0.2) 0%,
+    rgba(15, 15, 15, 0.6) 60%,
+    #0f0f0f 100%
+  );
+  z-index: 1;
+}
+
+/* Nội dung thông tin phim */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background-color: #e50914;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  color: #ffffff;
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 14px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.hero-description {
+  color: #e5e5e5;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Nút bấm thao tác */
+.hero-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-buttons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-icon {
+  font-size: 14px;
+}
+
+.play-btn {
+  background-color: #e50914;
+  color: #ffffff;
+}
+
+.play-btn:hover {
+  background-color: #f6121d;
+  transform: translateY(-2px);
+}
+
+.info-btn {
+  background-color: rgba(109, 109, 110, 0.7);
+  color: #ffffff;
+}
+
+.info-btn:hover {
+  background-color: rgba(109, 109, 110, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   RESPONSIVE (MOBILE & TABLET)
+   ========================================== */
+
+@media (max-width: 767px) {
+  .hero {
+    min-height: 55vh;
+    padding: 0 16px 32px 16px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+
+  .hero-description {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+
+  .hero-buttons button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}

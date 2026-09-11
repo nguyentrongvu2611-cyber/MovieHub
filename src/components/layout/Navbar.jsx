@@ -11,6 +11,7 @@ function Navbar() {
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // 💥 State mở/đóng Mobile Menu
 
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
@@ -56,58 +57,132 @@ function Navbar() {
     e.preventDefault();
     if (!keyword.trim()) return;
     setShowResults(false);
+    setIsMenuOpen(false);
     navigate(`/search?q=${encodeURIComponent(keyword.trim())}`);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("userChanged"));
+    setIsMenuOpen(false);
     navigate("/");
   };
 
-  // 💥 XỬ LÝ CLICK VÀO CHỮ PREMIUM
   const handlePremiumClick = (e) => {
     e.preventDefault();
-
-    // Kiểm tra cờ is_premium hoặc role của user
+    setIsMenuOpen(false);
     const isPremiumUser = user && (user.is_premium || user.role === "premium");
-
     if (isPremiumUser) {
-      navigate("/my-subscription"); // Chuyển đến trang thông tin gói
+      navigate("/my-subscription");
     } else {
-      navigate("/premium"); // Chuyển đến trang đăng ký gói
+      navigate("/premium");
     }
   };
 
   return (
     <header className="navbar">
       <div className="navbar-top">
-        <Link to="/" className="logo">
+        <Link to="/" className="logo" onClick={() => setIsMenuOpen(false)}>
           MOVIEHUB
         </Link>
 
-        {/* MAIN MENU */}
-        <nav className="main-menu">
-          <Link to="/movies?type=single">Phim Lẻ</Link>
-          <Link to="/movies?type=series">Phim Bộ</Link>
+        {/* 💥 NÚT HAMBURGER CHO MOBILE */}
+        <button
+          type="button"
+          className="hamburger-btn"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? "✕" : "☰"}
+        </button>
+
+        {/* MAIN MENU (THÊM CLASS ACTIVE KHI MỞ MENU) */}
+        <nav className={`main-menu ${isMenuOpen ? "active" : ""}`}>
+          <Link to="/movies?type=single" onClick={() => setIsMenuOpen(false)}>
+            Phim Lẻ
+          </Link>
+          <Link to="/movies?type=series" onClick={() => setIsMenuOpen(false)}>
+            Phim Bộ
+          </Link>
 
           {/* DROPDOWN THỂ LOẠI */}
           <div className="menu-dropdown">
             <button type="button">Thể Loại ▾</button>
             <div className="dropdown-content grid-3-cols">
-              <Link to="/movies?genre=action">Hành Động</Link>
-              <Link to="/movies?genre=romance">Tình Cảm</Link>
-              <Link to="/movies?genre=comedy">Hài Hước</Link>
-              <Link to="/movies?genre=historical">Cổ Trang</Link>
-              <Link to="/movies?genre=drama">Tâm Lý</Link>
-              <Link to="/movies?genre=crime">Hình Sự</Link>
-              <Link to="/movies?genre=war">Chiến Tranh</Link>
-              <Link to="/movies?genre=sport">Thể Thao</Link>
-              <Link to="/movies?genre=martial-arts">Võ Thuật</Link>
-              <Link to="/movies?genre=fantasy">Viễn Tưởng</Link>
-              <Link to="/movies?genre=adventure">Phiêu Lưu</Link>
-              <Link to="/movies?genre=horror">Kinh Dị</Link>
-              <Link to="/movies?genre=animation">Anime & Hoạt Hình</Link>
+              <Link
+                to="/movies?genre=action"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Hành Động
+              </Link>
+              <Link
+                to="/movies?genre=romance"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Tình Cảm
+              </Link>
+              <Link
+                to="/movies?genre=comedy"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Hài Hước
+              </Link>
+              <Link
+                to="/movies?genre=historical"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Cổ Trang
+              </Link>
+              <Link
+                to="/movies?genre=drama"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Tâm Lý
+              </Link>
+              <Link
+                to="/movies?genre=crime"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Hình Sự
+              </Link>
+              <Link to="/movies?genre=war" onClick={() => setIsMenuOpen(false)}>
+                Chiến Tranh
+              </Link>
+              <Link
+                to="/movies?genre=sport"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Thể Thao
+              </Link>
+              <Link
+                to="/movies?genre=martial-arts"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Võ Thuật
+              </Link>
+              <Link
+                to="/movies?genre=fantasy"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Viễn Tưởng
+              </Link>
+              <Link
+                to="/movies?genre=adventure"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phiêu Lưu
+              </Link>
+              <Link
+                to="/movies?genre=horror"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Kinh Dị
+              </Link>
+              <Link
+                to="/movies?genre=animation"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Anime & Hoạt Hình
+              </Link>
             </div>
           </div>
 
@@ -115,13 +190,48 @@ function Navbar() {
           <div className="menu-dropdown">
             <button type="button">Quốc Gia ▾</button>
             <div className="dropdown-content grid-2-cols">
-              <Link to="/movies?country=china">Trung Quốc</Link>
-              <Link to="/movies?country=korea">Hàn Quốc</Link>
-              <Link to="/movies?country=japan">Nhật Bản</Link>
-              <Link to="/movies?country=thailand">Thái Lan</Link>
-              <Link to="/movies?country=usa">Âu Mỹ</Link>
-              <Link to="/movies?country=india">Ấn Độ</Link>
-              <Link to="/movies?country=vietnam">Việt Nam</Link>
+              <Link
+                to="/movies?country=china"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Trung Quốc
+              </Link>
+              <Link
+                to="/movies?country=korea"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Hàn Quốc
+              </Link>
+              <Link
+                to="/movies?country=japan"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Nhật Bản
+              </Link>
+              <Link
+                to="/movies?country=thailand"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Thái Lan
+              </Link>
+              <Link
+                to="/movies?country=usa"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Âu Mỹ
+              </Link>
+              <Link
+                to="/movies?country=india"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Ấn Độ
+              </Link>
+              <Link
+                to="/movies?country=vietnam"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Việt Nam
+              </Link>
             </div>
           </div>
 
@@ -130,7 +240,11 @@ function Navbar() {
             <button type="button">Năm Phát Hành ▾</button>
             <div className="dropdown-content grid-year">
               {years.map((year) => (
-                <Link key={year} to={`/movies?year=${year}`}>
+                <Link
+                  key={year}
+                  to={`/movies?year=${year}`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   {year}
                 </Link>
               ))}
@@ -141,18 +255,51 @@ function Navbar() {
           <div className="menu-dropdown">
             <button type="button">Chủ Đề Phim ▾</button>
             <div className="dropdown-content">
-              <Link to="/movies?topic=cinema">Phim Chiếu Rạp</Link>
-              <Link to="/movies?topic=dubbed">Phim Thuyết Minh</Link>
-              <Link to="/movies?topic=voice">Phim Lồng Tiếng</Link>
-              <Link to="/movies?topic=trailer">Phim Trailer</Link>
-              <Link to="/movies?topic=hot-week">Phim Hot Trong Tuần</Link>
-              <Link to="/movies?topic=completed">Phim Bộ Hoàn Thành</Link>
+              <Link
+                to="/movies?topic=cinema"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phim Chiếu Rạp
+              </Link>
+              <Link
+                to="/movies?topic=dubbed"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phim Thuyết Minh
+              </Link>
+              <Link
+                to="/movies?topic=voice"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phim Lồng Tiếng
+              </Link>
+              <Link
+                to="/movies?topic=trailer"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phim Trailer
+              </Link>
+              <Link
+                to="/movies?topic=hot-week"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phim Hot Trong Tuần
+              </Link>
+              <Link
+                to="/movies?topic=completed"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Phim Bộ Hoàn Thành
+              </Link>
             </div>
           </div>
 
-          {user && <Link to="/my-list">Danh sách của tôi</Link>}
+          {user && (
+            <Link to="/my-list" onClick={() => setIsMenuOpen(false)}>
+              Danh sách của tôi
+            </Link>
+          )}
 
-          {/* 💥 THAY ĐỔI TẠI ĐÂY */}
           <a
             href="/premium"
             onClick={handlePremiumClick}
@@ -168,13 +315,11 @@ function Navbar() {
             <form onSubmit={handleSubmit}>
               <input
                 type="text"
-                placeholder="Tìm kiếm phim..."
+                placeholder="Tìm kiếm..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onFocus={() => {
-                  if (keyword.trim()) {
-                    setShowResults(true);
-                  }
+                  if (keyword.trim()) setShowResults(true);
                 }}
               />
             </form>
@@ -188,7 +333,6 @@ function Navbar() {
                       movie.poster ||
                       movie.thumb_url ||
                       movie.posterUrl;
-
                     let finalPosterUrl =
                       "https://placehold.co/45x65/282828/FFF?text=No+Img";
 
@@ -214,6 +358,7 @@ function Navbar() {
                         onClick={() => {
                           setKeyword("");
                           setShowResults(false);
+                          setIsMenuOpen(false);
                         }}
                       >
                         <img
@@ -250,9 +395,15 @@ function Navbar() {
               <button
                 type="button"
                 className="user-trigger"
-                onClick={() => navigate("/profile")}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate("/profile");
+                }}
               >
-                👤 {user.username || user.name}
+                👤{" "}
+                <span className="user-name-text">
+                  {user.username || user.name}
+                </span>
               </button>
 
               <div className="user-dropdown-menu">
@@ -263,7 +414,6 @@ function Navbar() {
                 >
                   👤 Thông tin tài khoản
                 </button>
-
                 {user.role === "admin" && (
                   <button
                     type="button"
@@ -273,7 +423,6 @@ function Navbar() {
                     ⚙️ Quản lý tài khoản
                   </button>
                 )}
-
                 {(user.role === "admin" || user.role === "moderator") && (
                   <>
                     <button
@@ -292,7 +441,6 @@ function Navbar() {
                     </button>
                   </>
                 )}
-
                 <button
                   type="button"
                   className="logout-btn"

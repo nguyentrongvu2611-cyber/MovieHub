@@ -1,25 +1,203 @@
-.movie-row {
-  margin-bottom: 24px;
-}
+/* ==========================================
+   CONTAINER HÀNG PHIM
+   ========================================== */
 
-.movie-row h2 {
-  color: #fff;
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-.movie-row-list {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr); /* Đặt đúng 8 phim trên 1 hàng */
-  gap: 12px;
+.movie-row-container {
   width: 100%;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.movie-row-list::-webkit-scrollbar {
-  height: 6px;
+.movie-row-title {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+
+  margin: 0 0 12px 0;
+  padding-left: 16px;
+
+  letter-spacing: 0.3px;
 }
 
-.movie-row-list::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 10px;
+
+/* ==========================================
+   MOBILE
+   2 PHIM + 1/2 PHIM THỨ 3
+   ========================================== */
+
+@media screen and (max-width: 767px) {
+
+  .movie-horizontal-list {
+
+    /* QUAN TRỌNG NHẤT */
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    flex-wrap: nowrap !important;
+
+    /* CUỘN NGANG */
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+
+    /* Không cho nó thành grid */
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    box-sizing: border-box;
+
+    gap: 10px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 10px;
+
+    margin: 0;
+
+    /* Cho phép vuốt ngang */
+    touch-action: pan-x;
+
+    /* iPhone / Android */
+    -webkit-overflow-scrolling: touch;
+
+    /* Scroll mượt */
+    scroll-behavior: smooth;
+
+    /* HIỆN THANH CUỘN */
+    scrollbar-width: none;
+  }
+
+
+  /* Chrome / Edge / Safari */
+
+  .movie-horizontal-list::-webkit-scrollbar {
+    display: block !important;
+    height: 7px !important;
+  }
+
+  .movie-horizontal-list::-webkit-scrollbar-track {
+    background: #333333;
+    border-radius: 10px;
+  }
+
+  .movie-horizontal-list::-webkit-scrollbar-thumb {
+    background: #777777;
+    border-radius: 10px;
+  }
+
+
+  /* ==========================================
+     TỪNG CARD
+     ========================================== */
+
+  .movie-horizontal-list > .movie-card-link {
+
+    /* KHÔNG CHO CARD CO LẠI */
+    flex: 0 0 calc((100vw - 42px) / 2.5) !important;
+
+    width: calc((100vw - 42px) / 2.5) !important;
+
+    min-width: calc((100vw - 42px) / 2.5) !important;
+
+    max-width: calc((100vw - 42px) / 2.5) !important;
+
+    display: block !important;
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    flex-shrink: 0 !important;
+  }
+
+
+  /* ==========================================
+     POSTER
+     ========================================== */
+
+  .movie-horizontal-list .poster-img {
+
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    aspect-ratio: 2 / 3;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+  }
+}
+
+
+/* ==========================================
+   TABLET
+   ========================================== */
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+
+  .movie-horizontal-list {
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    width: 100%;
+  }
+
+  .movie-horizontal-list > .movie-card-link {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* ==========================================
+   DESKTOP
+   ========================================== */
+
+@media screen and (min-width: 1024px) {
+
+  .movie-row-title {
+    font-size: 20px;
+    padding-left: 0;
+  }
+
+  .movie-horizontal-list {
+
+    display: grid;
+
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+
+    gap: 16px;
+
+    width: 100%;
+  }
+
+  .movie-horizontal-list > .movie-card-link {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* ==========================================
+   MÀN HÌNH LỚN
+   ========================================== */
+
+@media screen and (min-width: 1400px) {
+
+  .movie-horizontal-list {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+
+    gap: 18px;
+  }
 }
